@@ -1,4 +1,4 @@
-load('helpers.js');
+load('../lib/helpers.js');
 
 var ret = helpers.exec('ls -l');
 
