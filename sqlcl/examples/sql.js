@@ -1,6 +1,7 @@
 /* Look up a single value to use in a bind later */
 var user = util.executeReturnOneCol('select user from dual');
 
+/* simple string or number binds can be a js object */
 var binds = {};
 binds.name = 'EMP';
 binds.who = user;
