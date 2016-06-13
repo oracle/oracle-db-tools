@@ -1,6 +1,6 @@
 # SQLcl - Scripting
 
-![SQLcl logo](sql-command-line-200.png)
+![SQLcl logo](images/sql-command-line-200.png)
 
 
 ## What is it?
