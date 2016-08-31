@@ -1,6 +1,8 @@
 
 var fatFinger = [  {  bad:"form",   good:"from"},
                    {  bad:"hwere",  good:"where"},
+                   {  bad:"“",  good:"\"" , all:true},
+                   {  bad:"”",  good:"\"" , all:true},
                    {  bad:"dula",   good:"dual"}                  
                 ];
 
@@ -29,6 +31,9 @@ for(var i = 0; i < fatFinger.length; i++) {
       if ( cmd.getSql().trim().indexOf(" "+ w.bad +" ") >0 ) {
           ctx.write("\n***Mispelled "+ w.bad +" again.   AUTOCORRECTING ***\n"); 
           cmd.setSql(cmd.getSql().replace(" "+ w.bad +" ", " "+ w.good +" /* AUTO CORRECTED */ "));
+      } else  if ( w.all && cmd.getSql().trim().indexOf( w.bad ) >0 ) {
+          ctx.write("\n***Mispelled "+ w.bad +" again.   AUTOCORRECTING ***\n"); 
+          cmd.setSql(cmd.getSql().replace( w.bad , w.good ));
       }
   }  
 
