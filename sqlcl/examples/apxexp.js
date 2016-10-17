@@ -5,7 +5,7 @@ var OracleTypes             = Java.type("oracle.jdbc.OracleTypes");
 var BigDecimal              = Java.type("java.math.BigDecimal");
 var CopyOption              = Java.type("java.nio.file.StandardCopyOption");
 var Charset                 = Java.type("java.nio.charset.Charset")
-
+var BufferedReader          = Java.type("java.io.BufferedReader")
 function ApexExport()  {
     this.CmdName = "apxexp";
 
@@ -255,38 +255,29 @@ function ApexExport()  {
     }
 
     this.clob2file=function (clob,fName){
-        var stream =  clob.getAsciiStream();
+        var stream =  new BufferedReader(clob.getCharacterStream());
 
        // get the path/file handle to write to
        var path = java.nio.file.FileSystems.getDefault().getPath(fName);
 
        // dump the file stream to the file
-       var bytes;
-         if ( this.options.replace) {
-             bytes =  java.nio.file.Files.copy(stream,path,CopyOption.REPLACE_EXISTING);
+       var bytes=0;
+         if (  ! path.toFile().exists() ||
+              ( this.options.replace && path.toFile().exists() )  {             
+                var bw = java.nio.file.Files.newBufferedWriter(path,Charset.forName("UTF-8"))
+                var line = null;
+                while((line = stream.readLine())!=null){
+                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  
+                            ) {
+                        bw.write(line,0,line.length());
+                        bytes = bytes + lines.length();
+                    }
+                    bw.newLine();
+                }
          } else {
-            try {
-                bytes =  java.nio.file.Files.copy(stream,path);
-            } catch(e if e instanceof java.nio.file.FileAlreadyExistsException){
-                ctx.write('File Exists. Failed to write ' + fName  + '\n Pass -replace to overwrite.\n')
-            }  
+              ctx.write('File Exists. Failed to write ' + fName  + '\n Pass -replace to overwrite.\n')
          }
          this.debug(" Wrote " + bytes + " bytes to " + fName);
-         // remove the -- Date comment from the file
-         if (this.options.skipDate){
-            var br  = java.nio.file.Files.newBufferedReader(path)
-            var tmp = java.nio.file.FileSystems.getDefault().getPath(fName + ".tmp");
-            var bw  = java.nio.file.Files.newBufferedWriter(tmp)
-            var line;
-            while(  (line=br.readLine()) != null  ) {
-                if ( line.indexOf("--   Date and Time:") != 0  ) {
-                    bw.write(line + "\n");
-                }
-            }
-            bw.close();
-            br.close();
-            java.nio.file.Files.move(tmp,path,CopyOption.REPLACE_EXISTING);
-         }
          return bytes;
 
     }
