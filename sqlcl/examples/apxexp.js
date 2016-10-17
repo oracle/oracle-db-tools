@@ -18,7 +18,7 @@ function ApexExport()  {
                                              "select application_id, application_name from apex_ws_applications where workspace_id <> 10 order by application_id",
 
             gStmtWorkspaces : "select workspace_id, workspace from apex_workspaces where workspace_id > 11 and (:wsID is null or workspace_id = :wsID) order by workspace_id",
-            
+
             gStmtWorkspacesFeedback : "select distinct workspace_id, workspace_name from apex_team_feedback where workspace_id > 11  and (:wsID is null or workspace_id = :wsID) order by workspace_id",
 
             gStmtSetSGID : "begin wwv_flow_api.set_security_group_id(p_security_group_id=>:SGID); end;",
@@ -32,7 +32,7 @@ function ApexExport()  {
     this.options={};
 
     //
-    // Get the cmd line args 
+    // Get the cmd line args
     //
     this.setVarsFromArgs = function(args){
             for (var i = 0; i < args.length; i++) {
@@ -92,7 +92,7 @@ function ApexExport()  {
                 }
             }
             return true; // all is good all args processed
-    }        
+    }
 
     this.usage = function(){
             ctx.write("\nUsage "+this.CmdName+"  [options]  \n");
@@ -135,7 +135,7 @@ function ApexExport()  {
             ctx.write("       var myoptions = ['-expWorkspace','-replace'];\n");
             ctx.write("       a.run(myoptions);\n");
             ctx.write("   /\n");
-    }   
+    }
     this.ExpFeed=function ( workspaceID,  deploymentSystem, expFeedbackSince){
                  var binds= {"wsID": workspaceID};
 
@@ -151,7 +151,7 @@ function ApexExport()  {
                 if ( ret == null || ret.length == 0){
                     ctx.write('Nothing to export\n')
                 }
-        }     
+        }
     this.ExportWorkspaces=function ( workspaceID,  teamdevdata,  minimal) {
             var binds= {"wsID": workspaceID};
             this.debug(JSON.stringify(binds))
@@ -161,7 +161,7 @@ function ApexExport()  {
             for (var i = 0; ret != null && i < ret.length; i++) {
 
                 ctx.write("Exporting Workspace " + ret[i].WORKSPACE_ID + ":'" + ret[i].WORKSPACE + "' \n");
-                
+
                 this.ExportWorkspace(ret[i].WORKSPACE_ID, teamdevdata, minimal);
 
                 this.debug("  Completed at " + new Date());
@@ -183,7 +183,7 @@ function ApexExport()  {
                         this.debug("  Completed at " + new Date());
                     }
                 } else {
-                 ctx.write("  Nothing to do.");   
+                 ctx.write("  Nothing to do.");
                 }
 
             }
@@ -263,14 +263,13 @@ function ApexExport()  {
        // dump the file stream to the file
        var bytes=0;
          if (  ! path.toFile().exists() ||
-              ( this.options.replace && path.toFile().exists() )  {             
+                 (  this.options.replace && path.toFile().exists()  ))   {
                 var bw = java.nio.file.Files.newBufferedWriter(path,Charset.forName("UTF-8"))
                 var line = null;
                 while((line = stream.readLine())!=null){
-                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  
-                            ) {
+                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  ) ) {
                         bw.write(line,0,line.length());
-                        bytes = bytes + lines.length();
+                        bytes = bytes + line.length();
                     }
                     bw.newLine();
                 }
@@ -346,7 +345,7 @@ function ApexExport()  {
 
             var bytes = this.clob2file(clob,theFileName);
 
-            cstmt.close();        
+            cstmt.close();
 
     }
 
@@ -418,11 +417,11 @@ function ApexExport()  {
         this.debug("\nRunning with Flags set:\n\t" + JSON.stringify(this.options) + "\n");
 
         // no app OR  no workspace , no luck
-        if ( this.options.appID == null 
-            && this.options.workspaceID == null 
-            &&  ( ! this.options.instance ) 
+        if ( this.options.appID == null
+            && this.options.workspaceID == null
+            &&  ( ! this.options.instance )
             &&  ( ! this.options.expWorkspace )){
-            this.usage()    
+            this.usage()
         } else {
             if (this.options.expWorkspace) {
                 this.ExportWorkspaces(this.options.workspaceID, this.options.expTeamdevdata, this.options.expMinimal);
@@ -471,7 +470,7 @@ cmd.handle = function (conn,ctx,cmd) {
 cmd.begin = function (conn,ctx,cmd) {
 }
 
-// fired after ANY Command 
+// fired after ANY Command
 cmd.end = function (conn,ctx,cmd) {
 }
 
@@ -479,8 +478,8 @@ cmd.end = function (conn,ctx,cmd) {
 
 var APEXExportCommand = Java.extend(CommandListener, {
         handleEvent:    cmd.handle ,
-        beginEvent:     cmd.begin  , 
-        endEvent:       cmd.end    
+        beginEvent:     cmd.begin  ,
+        endEvent:       cmd.end
 });
 
 // Registering the new Command
