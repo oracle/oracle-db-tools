@@ -273,6 +273,8 @@ function ApexExport()  {
                     }
                     bw.newLine();
                 }
+                bw.flush();
+                bw.close();
          } else {
               ctx.write('File Exists. Failed to write ' + fName  + '\n Pass -replace to overwrite.\n')
          }
