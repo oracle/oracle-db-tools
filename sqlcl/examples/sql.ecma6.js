@@ -15,7 +15,7 @@ ctx.write(`
 var ret = util.executeReturnListofList(`select object_name,object_type
                                           from  all_objects
                                          where object_name = :name
-					                                 and owner = :who `,binds);
+					   and owner = :who `,binds);
 
 for (var i = 0; i < ret.length; i++) {
     ctx.write( ` ${ret[i][1]} \t  ${ret[i][0]} \n`);
@@ -30,8 +30,8 @@ ctx.write(`
 
 ret = util.executeReturnList(`select object_name,object_type
                                 from  all_objects
-			                         where object_name = :name
-			                           and owner = :who `,binds);
+			       where object_name = :name
+			         and owner = :who `,binds);
 
 for (i = 0; i < ret.length; i++) {
     ctx.write( ` ${ret[i].OBJECT_TYPE} \t  ${ret[i].OBJECT_NAME}  \n`);
