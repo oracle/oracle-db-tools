@@ -13,6 +13,7 @@ function ApexImport()  {
     // various SQL we'll need later
           wsID :    "begin apex_application_install.SET_WORKSPACE_ID(   P_WORKSPACE_ID   =>  :workspaceID ); end;",
           appID:    "begin apex_application_install.SET_APPLICATION_ID(   P_APPLICATION_ID   =>  :appID); end;",
+          appGenID : "begin apex_application_install.GENERATE_APPLICATION_ID(); end;",
           offset :  "begin apex_application_install.SET_OFFSET(   P_OFFSET   =>  :offset ); end;",
           schema :  "begin apex_application_install.SET_SCHEMA(   P_SCHEMA   =>  :schema ); end;",
           appName:  "begin apex_application_install.SET_APPLICATION_NAME(   P_APPLICATION_NAME   =>  :appName  ); end;",
@@ -180,7 +181,11 @@ function ApexImport()  {
 
             }
             if (this.options.appID ){
-              util.execute(this.sql.appID,this.options);
+              if (this.options.appID.equals('AUTO') ) {
+                util.execute(this.sql.appGenID,this.options);
+              } else {
+                util.execute(this.sql.appID,this.options);
+              }
             }
             if ( this.options.offset ){
               util.execute(this.sql.offset,this.options);
@@ -278,7 +283,7 @@ CommandRegistry.addForAllStmtsListener(APEXImportCommand.class);
 /*
 script
 var a = new ApexImport();
-var myoptions = ["-file","f102.sql","-offset","123","-name","Kris","-alias","rice","-installSupportingObjects" ];
+var myoptions = ["-expWorkspace","-replace"];
 a.run(myoptions);
 /
 
