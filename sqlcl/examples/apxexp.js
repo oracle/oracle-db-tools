@@ -11,8 +11,8 @@ function ApexExport()  {
 
     this.sql = {
     // various SQL we'll need later
-            gStmt : "select application_id, application_name from apex_applications where workspace_id = :wsID and  ( :locked = 'Y'  OR (:locked = 'N' and build_status <> 'Run and Hidden' )  union " +
-                                 "select application_id, application_name from apex_ws_applications where workspace_id = :wsID order by application_id",
+            gStmt : "select application_id, application_name from apex_applications where workspace_id = :wsID and  ( :locked = 'Y'  OR (:locked = 'N' and build_status <> 'Run and Hidden' ))  union " +
+                                 "select application_id, application_name from apex_applications where workspace_id = :wsID order by application_id",
 
             gStmtInstance : "select application_id, application_name from apex_applications where workspace_id <> 10 and build_status <> 'Run and Hidden' union " +
                                              "select application_id, application_name from apex_ws_applications where workspace_id <> 10 order by application_id",
@@ -25,7 +25,9 @@ function ApexExport()  {
 
             gStmtGetSGID : "select v('FLOW_SECURITY_GROUP_ID') sgid from sys.dual",
 
-            gStmtIsWS : "select count(*) from apex_ws_applications where application_id = :appID"
+            gStmtIsWS : "select count(*) from apex_ws_applications where application_id = :appID",
+            gStmtIsWSName: "select WORKSPACE_ID from apex_workspaces where workspace = :wsName",
+            gStmtIsWSApps : "select APPLICATION_ID from apex_applications where WORKSPACE_ID = :wsID"
         };
 
     // hold all command line options
@@ -41,6 +43,8 @@ function ApexExport()  {
                     // just skip it.
                 } else if (args[i].equalsIgnoreCase("-workspaceid")) {
                     this.options.workspaceID = args[++i];
+                } else if (args[i].equalsIgnoreCase("-workspace")) {
+                      this.options.workspaceName = args[++i];
                 } else if (args[i].equalsIgnoreCase("-applicationid")) {
                     this.options.appID = args[++i];
                 } else if (args[i].equalsIgnoreCase("-debug")) {
@@ -98,6 +102,7 @@ function ApexExport()  {
             ctx.write("\nUsage "+this.CmdName+"  [options]  \n");
             ctx.write("    -applicationid:    ID for application to be exported\n");
             ctx.write("    -workspaceid:      Workspace ID for which all applications to be exported or the workspace to be exported\n");
+            ctx.write("    -workspace:        Case Sensative workspace name to export\n");
             ctx.write("    -instance:         Export all applications\n");
             ctx.write("    -expWorkspace:     Export workspace identified by -workspaceid or all workspaces if -workspaceid not specified\n");
             ctx.write("    -expMinimal:       Only export workspace definition, users, and groups\n");
@@ -192,7 +197,6 @@ function ApexExport()  {
                 var binds = {"SGID": workspaceID,"wsID":workspaceID}
                 var appID;
                 util.executeUpdate(this.sql.gStmtSetSGID,binds);
-
                 var securityGroupID = util.executeReturnOneCol(this.sql.gStmtGetSGID );
 
                 if (securityGroupID != workspaceID) {
@@ -206,7 +210,7 @@ function ApexExport()  {
                 } else {
                     binds.locked = 'Y'
                 }
-                var ret = util.executeReturnList(this.sql.gStmt2,binds);;
+                var ret = util.executeReturnList(this.sql.gStmt,binds);
 
                 for (i = 0; i < ret.length; i++) {
 
@@ -253,7 +257,11 @@ function ApexExport()  {
     this.debug=function (str){
         if ( this.options.gDebug ) { ctx.write("\n>>>"+str+"\n"); out.flush();}
     }
-
+    this.getWSID=function(name){
+      var binds={"wsName": this.options.workspaceName};
+      var wsID = util.executeReturnOneCol(this.sql.gStmtIsWSName,binds);
+      return wsID;
+    }
     this.clob2file=function (clob,fName){
         var stream =  new BufferedReader(clob.getCharacterStream());
 
@@ -267,7 +275,7 @@ function ApexExport()  {
                 var bw = java.nio.file.Files.newBufferedWriter(path,Charset.forName("UTF-8"))
                 var line = null;
                 while((line = stream.readLine())!=null){
-                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") == 0  ) ) {
+                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  ) ) {
                         bw.write(line,0,line.length());
                         bytes = bytes + line.length();
                     }
@@ -415,6 +423,9 @@ function ApexExport()  {
         if ( ! this.setVarsFromArgs(args) ) {
             return;
         }
+        if ( this.options.workspaceName ) {
+            this.options.workspaceID  = this.getWSID(this.options.workspaceName);
+        }
         // debug of what was passed
         this.debug("\nRunning with Flags set:\n\t" + JSON.stringify(this.options) + "\n");
 
@@ -431,7 +442,7 @@ function ApexExport()  {
                 this.ExpFeed(this.options.workspaceID, this.options.deploymentSystem, this.options.expFeedbackSince);
             } else if (this.options.expFiles && this.options.workspaceID) {
                 this.ExportStaticFiles(this.options.workspaceID);
-            } else{
+            } else {
                 this.ExportFiles(this.options.appID, this.options.workspaceID, userName);
             }
         }
