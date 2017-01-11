@@ -267,7 +267,7 @@ function ApexExport()  {
                 var bw = java.nio.file.Files.newBufferedWriter(path,Charset.forName("UTF-8"))
                 var line = null;
                 while((line = stream.readLine())!=null){
-                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  ) ) {
+                    if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") == 0  ) ) {
                         bw.write(line,0,line.length());
                         bytes = bytes + line.length();
                     }
