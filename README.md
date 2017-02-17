@@ -1,5 +1,5 @@
 # Oracle Database Tools
-This project is a repository of sample code that will demonstrate various concepts to assist developers in building applications around 
+This project is a repository of tools and sample code that will demonstrate various concepts to assist developers in building applications around 
 Oracle Database technologies. 
 
 SDKs and scripts will be available to integrate with [SQL Developer][1], [Data Modeler][2], [Oracle REST Data Services][3] and [DBaaS][4].
