@@ -90,9 +90,9 @@ public class CloudConnectionManager {
 		jksK.saveAs(keyPath);
 
 		System.setProperty("javax.net.ssl.trustStore", trustPath);
-		System.setProperty("javax.net.ssl.trustStorePassword", passwd.toString());
+		System.setProperty("javax.net.ssl.trustStorePassword", passwd);
 		System.setProperty("javax.net.ssl.keyStore", keyPath);
-		System.setProperty("javax.net.ssl.keyStorePassword", passwd.toString());
+		System.setProperty("javax.net.ssl.keyStorePassword", passwd);
 
 		Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + serviceName, user, password);
 		return conn;
