@@ -55,6 +55,14 @@ Example:
 ~~~		
 		ctx.write('Hello World');
 ~~~
+~~~
+cloneCLIConnection();
+~~~
+Example:
+
+~~~		
+	var JDBCConnection=ctx.cloneCLIConnection();
+~~~
 
    **util** ( again tons of methods ) 
    
