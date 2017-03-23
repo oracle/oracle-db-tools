@@ -6,55 +6,56 @@ var System  = Java.type("java.lang.System");
 
 // Create a new connection to use for monitoring
 // Grab the connect URL from the base connection in sqlcl
-var jdbc = conn.getMetaData().getURL();
-var user,pass;
+if ( typeof conn !== 'undefined' ) {
 
-var binds = {};
+    var LongOpsBinds = {};
 
-// long ops sql
-var sql = " SELECT sid, to_char(start_time,'hh24:mi:ss') stime, " +
-  " message,( sofar/totalwork)* 100 percent  " +
-  " FROM v$session_longops " +
-  " WHERE sofar/totalwork < 1" +
-  " and   sid = :SID";
+    // long ops sql
+    var sql = " SELECT sid, to_char(start_time,'hh24:mi:ss') stime, " +
+      " message,( sofar/totalwork)* 100 percent  " +
+      " FROM v$session_longops " +
+      " WHERE sofar/totalwork < 1" +
+      " and   sid = :SID";
 
-if ( args.length != 3 ) {
-  System.out.println(" NO USERNAME and PASSWORD passed in");
+    if ( !conn  ) {
+      System.out.println(" Not Monitoring , not connected ");
+    }else {
+      // grab SQLCL session's SID
+      var SID = util.executeReturnOneCol("select sys_context('USERENV','SID')  from dual")
+      LongOpsBinds.SID = SID;
+
+      // start it up
+      runme();
+
+    }
 } else {
-  // use username/password passed in as args
-  user = args[1];
-  pass = args[2]; 
-
-  // grab SQLCL session's SID
-  var SID = util.executeReturnOneCol("select sys_context('USERENV','SID')  from dual")
-  binds.SID = SID;
-
-  // start it up
-  runme();
-
+  System.out.println("Not Connected, longops could not run ");
 }
 
 function main(arg){
 	function inner(){
-		System.out.println("\nStarting Monitoring sid= " + binds.SID )
+		System.out.println("\nStarting Monitoring sid= " + LongOpsBinds.SID )
       //connect
-		var conn2  = DriverManager.getConnection(jdbc,user,pass);
-		var util2  = DBUtil.getInstance(conn2);
-       	var last = 0;
-      // run always !
-        while(true) {
-        ret = util2.executeReturnList(sql,binds);
-      // only print if the percent changed
-        if ( ret.length > 0 && last != ret[0].PERCENT ){
-        	last = ret[0].PERCENT;
-        	System.out.println( ret[0].STIME + "> " + ret[0].PERCENT + ' Completed \t' + ret[0].MESSAGE);
-
-    	} 
-      // sleepy time
-        Thread.sleep(1000);
-       } 
-       	System.out.println("\nDone Monitoring")
-		conn2.close();       
+        try {
+		     var conn2  = ctx.cloneCLIConnection();
+             var util2  = DBUtil.getInstance(conn2);
+             var last = 0;
+             // run always !
+             while(true) {
+                ret = util2.executeReturnList(sql,LongOpsBinds);
+                 // only print if the percent changed
+                 if ( ret.length > 0 && last != ret[0].PERCENT ){
+        	        last = ret[0].PERCENT;
+        	        System.out.println( ret[0].STIME + "> " + ret[0].PERCENT + ' Completed \t' + ret[0].MESSAGE);
+    	         }
+                 // sleepy time
+                 Thread.sleep(1000);
+              }
+       	      System.out.println("\nDone Monitoring")
+		      conn2.close();
+         } catch (e) {
+       	      System.out.println("\nLong Ops Monitoring Failed:" + e.getLocalizedMessage());
+         }
 	}
 	return inner;
 };
