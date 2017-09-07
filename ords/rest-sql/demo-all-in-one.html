@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css"/>
+<link rel="stylesheet" type="text/css" href="//cdn.rawgit.com/oracle/oraclejet/2a420014546d371d076ec741ef171f0a3c71f28d/dist/css/alta/oj-alta-min.css"/>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+<script>
+	<!-- handy changing the defaults for different envs like the continuous server -->
+	var conn = {"username":"HR",
+							"password":"oracle",
+							"schema":"hr",
+							"server":"http://"+window.location.hostname+":"+window.location.port+"/ords/"};
+	var request;
+</script>
+<style>
+.cmd {
+    background: #333;
+    border: 1px solid #111;
+    padding: 8px 15px;
+    font-size: 16px;
+    color: white;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    letter-spacing: 0;
+    /*border-radius: 5px 5px 0 0;*/
+    font-weight: normal;
+    margin-bottom: 0;
+    overflow: hidden;
+    font-family:monospace;
+}
+.oj-label, .oj-label-nocomp {
+    font-weight: normal;
+}
+.CodeMirror.cm-s-default {
+    border: 1px solid #dfe4e7;
+    border-radius: 2px;
+}
+#form-container .CodeMirror {
+    height: 200px;
+}
+#results-panel {
+    min-height: 400px;
+}
+#results-panel .CodeMirror {
+    height: calc(100% - 42px);
+}
+#tabs .oj-tabs-panel {
+    height: 200px;
+}
+#tabs .oj-tabs-panel p.cmd {
+    height: 100%;
+    box-sizing: border-box;
+}
+</style>
+<script>
+var editor,results;
+require([
+	"codemirror/lib/codemirror",
+	"codemirror/mode/javascript/javascript",
+	"codemirror/addon/comment/comment",
+	"codemirror/addon/comment/continuecomment",
+	"codemirror/addon/edit/matchbrackets"
+
+],
+  (CodeMirror)=>{
+        editor = CodeMirror.fromTextArea(document.getElementById("sql"), {
+	          lineNumbers: true,
+	          matchBrackets: true,
+	          continueComments: "Enter",
+	          extraKeys: {"Ctrl-Q": "toggleComment"}
+	        });
+					results = CodeMirror.fromTextArea(document.getElementById("results"), {
+							lineNumbers: true,
+							matchBrackets: true,
+							continueComments: "Enter",
+							mode : {name: "javascript", json: true},
+							extraKeys: {"Ctrl-Q": "toggleComment"}
+						});
+
+  }
+);
+    require(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout', 'ojs/ojinputtext','ojs/ojselectcombobox','ojs/ojbutton', 'ojs/ojtabs', 'ojs/ojconveyorbelt' ],
+          function(oj, ko, $){
+						function FormModel () {
+							  this.server = ko.observable(conn.server);
+								this.username = ko.observable(conn.username);
+								this.password = ko.observable(conn.password);
+								this.schema = ko.observable(conn.schema);
+
+								this.contentTypes = ko.observableArray([
+										{value: ct_sql, label: ct_sql},
+										{value: ct_json,label: ct_json}
+									]);
+
+								this.exampleArr = ko.observableArray(examples);
+
+								self.onChange = function(event,data){
+									setExample(examples[data.value]);
+								};
+							}
+            $(
+                function()  {
+                    ko.applyBindings(new FormModel(),document.getElementById('form-container'));
+                    setExample(examples[0]);
+                    ko.applyBindings(null, document.getElementById('tabs'));
+                }
+            );
+
+          });
+
+
+//RequireJS configs (usually these come first in main.js, but they don't have to)
+requirejs.config({
+    // Path mappings for the logical module names
+    paths: {
+        'knockout': '//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min',
+        'jquery': '//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min',
+        "jqueryui-amd": "//rawgit.com/jquery/jquery-ui/1.12.0/ui",
+        "promise": "//cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.1/es6-promise.min",
+        "hammerjs": "//cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min",
+        "ojdnd": "//rawgit.com/oracle/oraclejet/2.1.0/dist/js/libs/dnd-polyfill/dnd-polyfill-1.0.0.min",
+        "ojs": "//rawgit.com/oracle/oraclejet/2.1.0/dist/js/libs/oj/debug",
+        "ojL10n": "//rawgit.com/oracle/oraclejet/2.1.0/dist/js/libs/oj/ojL10n",
+        "ojtranslations": "//rawgit.com/oracle/oraclejet/2.1.0/dist/js/libs/oj/resources",
+        "text": "//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min",
+        "signals": "//cdnjs.cloudflare.com/ajax/libs/js-signals/1.0.0/js-signals.min",
+        "codemirror": 		"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0",
+        "codemirror/lib": "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0"
+
+    },
+    waitSeconds: 20,
+    shim: {
+        'jquery': {
+            exports: ['jQuery', '$']
+        }
+    }
+});
+
+</script>
+<title>ORDS REST enabled SQL</title>
+</head>
+<body>
+
+<div class="oj-padding-">
+    <div class="oj-flex oj-md-flex-wrap-nowrap">
+        <div class="oj-flex-item oj-sm-12 oj-md-5 oj-panel oj-margin">
+            <h3 class="oj-header-border" style="font-weight: normal;">Request</h3>
+            <div id="form-container">
+                <div class="oj-form-layout">
+                    <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">
+
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="server">Server</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="server" type="text" data-bind="ojComponent: {component: 'ojInputText',value: server,optionChange: onChange, rootAttributes: { style: 'max-width: 20em;' } }">
+                            </div>
+                        </div>
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="username">Username</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="username" type="text" data-bind="ojComponent: {component: 'ojInputText',value: username,optionChange: onChange, rootAttributes: { style: 'max-width: 20em;' } }">
+                            </div>
+                        </div>
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="password">Password</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="password" type="text" data-bind="ojComponent: {component: 'ojInputText',value: password,optionChange: onChange, rootAttributes: { style: 'max-width: 20em;' } }">
+                            </div>
+                        </div>
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="schema">Schema</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="schema" type="text" data-bind="ojComponent: {component: 'ojInputText',value: schema,optionChange: onChange, rootAttributes: { style: 'max-width: 20em;' } }">
+                            </div>
+                        </div>
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="contentType">Content Type</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="contentType" list="contentTypes" data-bind="ojComponent: {component: 'ojSelect', value: 'application/sql',optionChange: onChange,rootAttributes: {style:'max-width:20em'}}"/>
+                                <datalist id="contentTypes">
+                                    <!-- ko foreach: contentTypes -->
+                                    <option data-bind="value:value, text:label"></option>
+                                    <!-- /ko -->
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="oj-flex">
+                            <div class="oj-flex-item">
+                                <label for="exampleSelector">Examples</label>
+                            </div>
+                            <div class="oj-flex-item">
+                                <input id="exampleSelector" list="exampleList" data-bind="ojComponent: {component: 'ojSelect',rootAttributes: {style:'max-width:20em'} ,optionChange: onChange}"/>
+                                <datalist id="exampleList">
+                                    <!-- ko foreach: exampleArr -->
+                                    <option data-bind="value: $index, text:name"></option>
+                                    <!-- /ko -->
+                                </datalist>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div> <!-- end form-layout -->
+                <!-- SQL -->
+
+                <div class="oj-flex">
+                    <div class="oj-flex-item" style="width: 100%;">
+                        <textarea id="sql" wrap="off"></textarea>
+                    </div>
+                </div>
+
+                <div class="oj-flex oj-margin-top">
+                    <div class="oj-flex-item oj-helper-text-align-end">
+                        <input id="submit" type="submit" data-bind="click: runIt, ojComponent: {component: 'ojButton', label: 'Run »'}" style="margin: 0;"/>
+                    </div>
+                </div>
+            </div> <!-- form container -->
+        </div>
+        <div class="oj-flex-item oj-sm-12 oj-md-7 oj-panel oj-margin" id="results-panel">
+            <h3 class="oj-header-border" style="font-weight: normal;">Response</h3>
+            <textarea id="results" wrap="off" style="height: calc(100% - 36px);"></textarea>
+        </div>
+    </div>
+    <!-- below -->
+    <div class="oj-margin">
+        <div id="tabs" data-bind="ojComponent:{component: 'ojTabs'}">
+            <!-- tab bar -->
+            <ul>
+                <li><span>Curl Example</span></li>
+                <li><span>SQL CL</span></li>
+            </ul>
+
+            <!-- tab contents -->
+            <div id="tabs-1">
+                <p class="cmd" id="curl">curl</p>
+            </div>
+            <div id="tabs-2">
+                <p class="cmd" id="sqlcl">&nbsp;</p>
+            </div>
+      </div>
+    </div>
+</div>
+</body>
+
+<script>
+function runIt(){
+		request = { ct: $("#contentType").ojSelect("option","value")[0],
+                    sql:  editor.getDoc().getValue(),
+                    server: $("#server").ojInputText("option","value"),
+                    schema: $("#schema").ojInputText("option","value").toLowerCase(),
+                    username : $("#username").ojInputText("option","value"),
+                    password : $("#password").ojInputText("option","value"),
+                    url :  $("#server").ojInputText("option","value")+$("#schema").ojInputText("option","value").toLowerCase()+"/_/sql",
+                    curl : "curl -i -X POST --user "+$("#username").ojInputText("option","value")+":"+$("#password").ojInputText("option","value")+" --data-binary \"@foo.sql"+"\" -H \"Content-Type: "+$("#contentType").ojSelect("option","value")[0]+ "\" -k "+ $("#server").ojInputText("option","value")+$("#schema").ojInputText("option","value").toLowerCase()+"/_/sql"
+
+                };
+
+		console.log(request);
+		$("#curl").text(request.curl);
+		runRequest(request,processResponse,processFailure);
+
+}
+
+
+function runRequest(request, callback,failCallback) {
+	$.ajax({  type: "POST",
+					  url: request.url,
+					  data: request.sql,
+					  success: callback,
+						error: failCallback,
+						beforeSend: function( xhr ) {
+							xhr.setRequestHeader('Content-Type', request.ct);
+							xhr.setRequestHeader("Authorization", "Basic " + btoa(request.username + ":" + request.password));
+							xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+
+  						}
+					});
+
+}
+
+
+function processFailure(xhr,status,err){
+	console.log('fail');
+	if ( err == 'Unauthorized'){
+		results.getDoc().setValue("Username or Password is incorrect");
+	}	else {
+		results.getDoc().setValue(err);
+	}
+}
+  //callback functionality
+  function processResponse(data,status,xhr){
+		console.log(data);
+		console.log(status);
+		results.getDoc().setValue(JSON.stringify(data,null,4));
+	  updateConsole(data);
+  }
+
+function updateConsole(data){
+			var jsonObj = data;
+			console.log(jsonObj);
+			//try and report the "repsonse" field
+			var statementText = jsonObj.items[0].statementText;
+			var responseArray = null;
+			var itemsArray = null;
+			var metadataArray =null;
+			var resultText = null;
+			var resultSetText = null;
+			if(jsonObj.items[0].hasOwnProperty('response')) {
+				responseArray = jsonObj.items[0].response;
+			}
+			if(jsonObj.items[0].hasOwnProperty('resultSet')) {
+				itemsArray = jsonObj.items[0].resultSet.items;
+			}
+			if(jsonObj.items[0].hasOwnProperty('resultSet')) {
+			 	metadataArray = jsonObj.items[0].resultSet.metadata;
+			}
+			if(responseArray !== null) {
+				resultText = processResponseArray(responseArray).trim();
+			}
+			if(itemsArray !==null && metadataArray !== null) {
+				resultSetText = processResultSet(itemsArray,metadataArray);
+			}
+			var consoleText = "> sql "+request.username+"/"+request.password+"@"+request.url;
+			consoleText = consoleText +"<br/>" + "SQL>"+request.sql.replace(/\n/g, "<br />");
+
+
+			if(resultSetText!==null && resultSetText.trim() !== ""){
+				consoleText = consoleText+"\n"+resultSetText;
+			}
+			$("#sqlcl").html(consoleText);
+}
+
+function consolePageWrap(text){
+	var htmlPage =  "<html><body style=\"background-color:black;color:white; white-space: nowrap;\"><pre>" + text + "</pre></body></html>";
+	return htmlPage;
+}
+
+function processResponseArray(responseArray){
+	var str = responseArray.join(" ").replace(/\r\n/g," ");
+	return str;
+}
+
+function processResultSet(items,metadata){
+	var resultSetTable ="<table>"+columnHeader(metadata) + rows(items)+"</table>";
+	return resultSetTable;
+}
+
+function columnHeader(metadata){
+	var columnHeaderRow = "<tr>";
+	for (index = 0; index < metadata.length; ++index) {
+		columnHeaderRow += "<td>"+metadata[index].columnName+"</td>";
+	}
+	columnHeaderRow += "</tr>";
+	return columnHeaderRow;
+}
+
+function rows(items){
+	var rows = "";
+	for (index = 0; index < items.length; ++index) {
+		rows += row(items[index]);
+	}
+	return rows;
+}
+
+function row(item){
+	var row = "<tr>";
+	for (var property in item) {
+	    if (item.hasOwnProperty(property)) {
+	        row += "<td>"+item[property]+"</td>";
+	    }
+	}
+	row += "</tr>";
+	return row;
+}
+
+</script>
+<script>
+
+function setExample(d) {
+	if ( d ){
+			console.log(d);
+			editor.getDoc().setValue(d.value);
+			$("#contentType").ojSelect("option","value",d.contentType);
+		}
+}
+
+/**
+ * Keep all the examples used in the drop down examples
+ */
+var text_simple_query = 'SELECT sysdate FROM dual;';
+var json_simple_query = `{ "statementText":"` + text_simple_query + `"}`;
+var text_ddl = 'CREATE TABLE T1(col1 int);';
+var text_dml = 'INSERT INTO T1 VALUES(1);';
+var text_plsql = 'BEGIN\n  DBMS_OUTPUT.PUT_LINE(\'Hello From PL/SQL\');\nEND;\n/';
+var text_sqlplus = 'DESC all_tables';
+var text_sqlcl = `info sys.all_users;`;
+var text_script = `CREATE TABLE ADHOC_TABLE_SIMPLE(col1 INT);
+CREATE TABLE ADHOC_TABLE_DATE(col1 INT, col2 DATE);
+CREATE OR REPLACE TYPE ADHOC_VARRAY_NUMBER AS VARRAY(3) OF NUMBER;
+/
+CREATE OR REPLACE TYPE ADHOC_VARRAY_VARCYHAR2 AS VARRAY(3) OF VARCHAR2(10);
+/
+CREATE OR REPLACE PROCEDURE ADHOC_PROC_SIMPLE
+AS
+BEGIN
+  dbms_output.put_line('Inside ADHOC_PROC_SIMPLE using DBMS_OUTPUT.PUT_LINE');
+END;
+/
+CREATE OR REPLACE PROCEDURE ADHOC_PROC_SIMPLE_PARAM( param1 NUMBER )
+AS
+BEGIN
+  INSERT INTO ADHOC_TABLE_SIMPLE VALUES(param1);
+END;
+/
+CREATE OR REPLACE PROCEDURE ADHOC_PROC_SIMPLE_OUTPARAM(
+    param1 IN NUMBER,
+    param2 OUT NUMBER)
+AS
+BEGIN
+  param2 := param1+100;
+END;
+/
+CREATE OR REPLACE FUNCTION ADHOC_FUNC_SIMPLE RETURN VARCHAR2
+AS
+BEGIN
+  RETURN 'hello from simplefunc';
+END;
+/
+CREATE OR REPLACE PROCEDURE ADHOC_PROC_SIMPLE_OUT_CURSOR( param1 OUT SYS_REFCURSOR )
+AS
+BEGIN
+  OPEN param1 FOR SELECT 'inside outproccursor' AS col1 FROM dual;
+END;
+/`;
+var text_sqlplus_bind_var = `var var1 number
+var var2 number
+exec :var1 := 1;
+exec :var2 := 100;
+
+select table_name, num_rows
+  from user_tables
+ where num_rows > :var1
+   and num_rows < :var2 ;
+`;
+
+var json_pagination = `{
+  "statementText": "select object_name from all_objects",
+  "offset": 25,
+  "limit": 25,
+  "$asof": {"$scn": "1273919"}
+} `;
+
+var json_bind_query = `{
+	  "statementText": "SELECT ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? FROM dual",
+	  "binds":[
+	{"index":1,"data_type":"NUMBER","value":123},
+	{"index":2,"data_type":"NUMERIC","value":123},
+	{"index":3,"data_type":"DECIMAL","value":123},
+	{"index":4,"data_type":"DEC","value":123},
+	{"index":5,"data_type":"NUMBER","value":123},
+	{"index":6,"data_type":"INTEGER","value":123},
+	{"index":7,"data_type":"INT","value":123},
+	{"index":8,"data_type":"SMALLINT","value":123},
+	{"index":9,"data_type":"FLOAT","value":123},
+	{"index":10,"data_type":"DOUBLE PRECISION","value":123},
+	{"index":11,"data_type":"REAL","value":123},
+	{"index":12,"data_type":"BINARY_FLOAT","value":123},
+	{"index":13,"data_type":"BINARY_DOUBLE","value":123},
+	{"index":14,"data_type":"CHAR","value":"abc"},
+	{"index":15,"data_type":"CHARACTER","value":"abc"},
+	{"index":16,"data_type":"VARCHAR","value":"abc"},
+	{"index":17,"data_type":"VARCHAR2","value":"abc"},
+	{"index":18,"data_type":"CHAR VARYING","value":"abc"},
+	{"index":19,"data_type":"CHARACTER VARYING","value":"abc"},
+	{"index":20,"data_type":"NCHAR","value":"abc"},
+	{"index":21,"data_type":"NATIONAL CHAR","value":"abc"},
+	{"index":22,"data_type":"NATIONAL CHARACTER","value":"abc"},
+	{"index":23,"data_type":"NVARCHAR","value":"abc"},
+	{"index":24,"data_type":"NVARCHAR2","value":"abc"},
+	{"index":25,"data_type":"NCHAR VARYING","value":"abc"},
+	{"index":26,"data_type":"NATIONAL CHAR VARYING","value":"abc"},
+	{"index":27,"data_type":"NATIONAL CHARACTER VARYING","value":"abc"},
+	{"index":28,"data_type":"DATE","value":"01-Jan-2016"},
+	{"index":29,"data_type":"TIMESTAMP","value":"1997-01-31 09:26:50.124"},
+	{"index":30,"data_type":"TIMESTAMP","value":"1997-01-31 09:26:50.124"},
+	{"index":31,"data_type":"TIMESTAMP WITH LOCAL TIME ZONE","value":"1997-01-31 09:26:50.124"},
+	{"index":32,"data_type":"TIMESTAMP WITH TIME ZONE","value":"1997-01-31 09:26:50.124"},
+	{"index":33,"data_type":"INTERVALYM","value":"09-10"},
+	{"index":34,"data_type":"INTERVAL YEAR TO MONTH","value":"10-10"},
+	{"index":35,"data_type":"INTERVAL YEAR(2) TO MONTH","value":"10-10"},
+	{"index":36,"data_type":"INTERVALDS","value":"11 10:10:10"},
+	{"index":37,"data_type":"INTERVAL DAY TO SECOND","value":"08 10:10:10"},
+	{"index":38,"data_type":"INTERVAL DAY(2) TO SECOND(6)","value":"07 10:10:10"},
+	{"index":39,"data_type":"ROWID","value":1},
+	{"index":40,"data_type":"RAW","value":"AB"},
+	{"index":41,"data_type":"LONG RAW","value":"AB"},
+	{"index":42,"data_type":"CLOB","value":"clobvalue"},
+	{"index":43,"data_type":"NCLOB","value":"clobvalue"},
+	{"index":45,"data_type":"LONG","value":"A"},
+	{"index":46,"data_type":"VARCHAR","value":"abc"},
+	{"index":47,"data_type":"BINARY_DOUBLE","value":123}
+	]
+}`;
+
+var json_bind_varray = `{
+  "statementText": "SELECT ? as col_ARRAY FROM dual",
+  "offset": 0,
+  "limit": 5,
+  "binds":[
+{"index":1,"data_type":"VARRAY", "type_name":"ADHOC_VARRAY_NUMBER","value":[1,5,3]}
+]
+}`;
+
+var json_proc_param = `{
+  "statementText": "exec ADHOC_PROC_SIMPLE_PARAM(?)",
+  "binds":[ {"index":1,"data_type":"NUMBER","value":77} ]
+}
+`;
+
+var json_proc_param_out = `{
+  "statementText": "exec ADHOC_PROC_SIMPLE_OUTPARAM(?,?)",
+  "binds":[ {"index":1,"data_type":"NUMBER","value":77},
+            {"index":2,"data_type":"NUMBER","mode":"out"}
+  ]
+}
+`;
+
+var json_proc_param_out_cursor = `{
+  "statementText": "exec ADHOC_PROC_SIMPLE_OUT_CURSOR(?)",
+  "binds":[ {"index":1,"data_type":"CURSOR","mode":"out"}]
+}
+`;
+
+var json_block_inout = `{
+  "statementText":"begin ? := ? + 1; ? := ? +2 ; end;",
+  "binds":[ {"index":1,"data_type":"NUMBER","mode":"out"},
+            {"index":2,"data_type":"NUMBER","value":7} ,
+            {"index":3,"data_type":"NUMBER","mode":"out"} ,
+            {"index":4,"data_type":"NUMBER","value":8}
+          ]
+}
+`;
+
+var json_block_inout_bindbyname = `{
+  "statementText":"begin :mybind1 := :mybind2 + 1; :mybind3 := :mybind4 +2 ; end;",
+  "binds":[ {"name":"mybind1","data_type":"NUMBER","mode":"out"},
+            {"name":"mybind2","data_type":"NUMBER","value":7} ,
+            {"name":"mybind3","data_type":"NUMBER","mode":"out"} ,
+            {"name":"mybind4","data_type":"NUMBER","value":8}
+          ]
+}
+`;
+
+var json_function_binds = `{
+	  "statementText":"exec  ? := addTen(?);",
+	  "binds":[ {"index":1,"data_type":"NUMBER","mode":"out"},
+	            {"index":2,"data_type":"NUMBER","value":20}
+	          ]
+	}
+`;
+
+var json_jdbc_function_binds = `{
+		  "statementText":"{ ? = call addTen(?)}",
+		  "binds":[ {"index":1,"data_type":"NUMBER","mode":"out"},
+		            {"index":2,"data_type":"NUMBER","value":20}
+		          ]
+		}
+`;
+
+var text_date = `SELECT TO_DATE('2016-01-01 10:00:03','yyyy-mm-dd hh24:mi:ss' ) winter,
+TO_DATE('2016-07-01 10:00:03','yyyy-mm-dd hh24:mi:ss' ) summer
+FROM dual;
+`;
+
+var ct_sql = "application/sql";
+var ct_json = "application/json";
+//**************************************************************************************************//
+var examples = [{
+        name: "text_simple_query",
+        value: text_simple_query,
+        contentType : ct_sql
+    },
+    {
+        name: "json_simple_query",
+        value: json_simple_query,
+        contentType : ct_json
+    },
+    {
+        name: "text_ddl",
+        value: text_ddl,
+        contentType : ct_sql
+    },
+    {
+        name: "text_dml",
+        value: text_dml,
+        contentType : ct_sql
+    },
+    {
+        name: "text_plsql",
+        value: text_plsql,
+        contentType : ct_sql
+    },
+    {
+        name: "text_sqlplus",
+        value: text_sqlplus,
+        contentType : ct_sql
+    },
+    {
+        name: "text_sqlcl",
+        value: text_sqlcl,
+        contentType : ct_sql
+    },
+    {
+        name: "text_script",
+        value: text_script,
+        contentType : ct_sql
+    },
+    {
+        name: "text_sqlplus_bind_var",
+        value: text_sqlplus_bind_var,
+        contentType : ct_sql
+    },
+    {
+        name: "text_date",
+        value: text_date,
+        contentType : ct_sql
+    },
+    {
+        name: "json_pagination",
+        value: json_pagination,
+        contentType : ct_json
+    },
+    {
+        name: "json_bind_query",
+        value: json_bind_query,
+        contentType : ct_json
+    },
+    {
+        name: "json_bind_varray",
+        value: json_bind_varray,
+        contentType : ct_json
+    },
+    {
+        name: "json_proc_param",
+        value: json_proc_param,
+        contentType : ct_json
+    },
+    {
+        name: "json_proc_param_out ",
+        value: json_proc_param_out,
+        contentType : ct_json
+    },
+    {
+        name: "json_proc_param_out_cursor",
+        value: json_proc_param_out_cursor,
+        contentType : ct_json
+    },
+    {
+        name: "json_block_inout",
+        value: json_block_inout,
+        contentType : ct_json
+    },
+    {
+        name: "json_block_inout_bindbyname",
+        value: json_block_inout_bindbyname,
+        contentType : ct_json
+    },
+    {
+        name: "json_function_binds",
+        value: json_function_binds,
+        contentType : ct_json
+    }
+];
+
+</script>
+</html>
