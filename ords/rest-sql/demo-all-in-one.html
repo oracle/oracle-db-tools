@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css"/>
 <link rel="stylesheet" type="text/css" href="//cdn.rawgit.com/oracle/oraclejet/2a420014546d371d076ec741ef171f0a3c71f28d/dist/css/alta/oj-alta-min.css"/>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
 <script>
 	<!-- handy changing the defaults for different envs like the continuous server -->
 	var conn = {"username":"HR",
@@ -46,7 +47,7 @@
     height: calc(100% - 42px);
 }
 #tabs .oj-tabs-panel {
-    height: 200px;
+    min-height: 200px;
 }
 #tabs .oj-tabs-panel p.cmd {
     height: 100%;
@@ -55,6 +56,7 @@
 </style>
 <script>
 var editor,results;
+
 require([
 	"codemirror/lib/codemirror",
 	"codemirror/mode/javascript/javascript",
@@ -80,7 +82,8 @@ require([
 
   }
 );
-    require(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout', 'ojs/ojinputtext','ojs/ojselectcombobox','ojs/ojbutton', 'ojs/ojtabs', 'ojs/ojconveyorbelt' ],
+
+    require(['ojs/ojcore', 'knockout', 'jquery','ojs/ojknockout','ojs/ojinputtext','ojs/ojselectcombobox','ojs/ojbutton', 'ojs/ojtabs', 'ojs/ojconveyorbelt' ],
           function(oj, ko, $){
 						function FormModel () {
 							  this.server = ko.observable(conn.server);
@@ -109,6 +112,10 @@ require([
 
           });
 
+//					script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js
+require(['handlebars'], function (myHandlebars) {
+	Handlebars = myHandlebars;
+});
 
 //RequireJS configs (usually these come first in main.js, but they don't have to)
 requirejs.config({
@@ -126,7 +133,9 @@ requirejs.config({
         "text": "//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text.min",
         "signals": "//cdnjs.cloudflare.com/ajax/libs/js-signals/1.0.0/js-signals.min",
         "codemirror": 		"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0",
-        "codemirror/lib": "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0"
+        "codemirror/lib": "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0",
+				'handlebars': '//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars'
+
 
     },
     waitSeconds: 20,
@@ -136,6 +145,7 @@ requirejs.config({
         }
     }
 });
+
 
 </script>
 <title>ORDS REST enabled SQL</title>
@@ -239,21 +249,80 @@ requirejs.config({
             <!-- tab bar -->
             <ul>
                 <li><span>Curl Example</span></li>
-                <li><span>SQL CL</span></li>
+								<li><span>JQuery</span></li>
+								<li><span>SQLcl</span></li>
             </ul>
-
             <!-- tab contents -->
             <div id="tabs-1">
                 <p class="cmd" id="curl">curl</p>
             </div>
-            <div id="tabs-2">
+						<div id="tabs-2">
+                <p class="cmd" id="jquery">&nbsp;</p>
+            </div>
+						<div id="tabs-3">
                 <p class="cmd" id="sqlcl">&nbsp;</p>
             </div>
-      </div>
+					</div>
     </div>
 </div>
 </body>
 
+
+<script id="sqlcl-template" type="text/x-handlebars-template">
+	  {{#each items}}
+SQL>{{statementText}};
+{{#if resultSet}}
+	<table border=1>
+			<tr>
+			{{#each resultSet.metadata  }}
+		 			<th>{{columnName}}</th>
+				{{/each}}
+			</tr>
+				{{#each resultSet.items as |childValue childKey| }}
+					  <tr>
+							{{#each childValue}}<td>{{this}}</td>{{/each}}
+						</tr>
+				{{/each}}
+	</table>
+{{/if}}
+
+{{#if response}}
+<pre>  {{#each response}}{{this}}{{/each}}</pre>
+{{/if}}
+
+{{#if binds}} 
+<br/>
+Binds
+	 <table border=1><tr><th>Mode</th><th>Index</th><th>Data Type</th><th>Result</th><th>Value</th></tr>
+		 {{#each binds}}<tr><td>{{mode}}</td><td>{{index}}</td><td>{{data_type}}</td><td>{{result}}</td><td>{{value}}</td></tr>{{/each}}
+	 </table>
+{{/if}}
+
+{{#if errorDetails}}
+   {{errorDetails}}
+{{/if}}
+
+
+{{/each}}
+</script>
+<script id="jquery-template" type="text/x-handlebars-template">
+	<pre>
+	$.ajax({  type: "POST",
+            url: "{{url}}",
+            data: "{{sql}}",
+            beforeSend: function( xhr ) {
+              xhr.setRequestHeader('Content-Type', {{ct}});
+              xhr.setRequestHeader("Authorization", "Basic " + btoa({{username}} + ":" + {{password}}));
+              xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+              }
+          });
+		</pre>
+</script>
+<script id="curl-template" type="text/x-handlebars-template">
+	<pre>
+ curl -i -X POST --user {{username}}:{{password}} --data-binary "foo.sql" -H "Content-Type: {{ct}} " -k  {{url}}
+		</pre>
+</script>
 <script>
 function runIt(){
 		request = { ct: $("#contentType").ojSelect("option","value")[0],
@@ -262,17 +331,18 @@ function runIt(){
                     schema: $("#schema").ojInputText("option","value").toLowerCase(),
                     username : $("#username").ojInputText("option","value"),
                     password : $("#password").ojInputText("option","value"),
-                    url :  $("#server").ojInputText("option","value")+$("#schema").ojInputText("option","value").toLowerCase()+"/_/sql",
-                    curl : "curl -i -X POST --user "+$("#username").ojInputText("option","value")+":"+$("#password").ojInputText("option","value")+" --data-binary \"@foo.sql"+"\" -H \"Content-Type: "+$("#contentType").ojSelect("option","value")[0]+ "\" -k "+ $("#server").ojInputText("option","value")+$("#schema").ojInputText("option","value").toLowerCase()+"/_/sql"
-
+                    url :  $("#server").ojInputText("option","value")+$("#schema").ojInputText("option","value").toLowerCase()+"/_/sql"
                 };
-
-		console.log(request);
-		$("#curl").text(request.curl);
+		updateExample("curl",request)
+		updateExample("jquery",request)
 		runRequest(request,processResponse,processFailure);
-
 }
 
+function updateExample(src,request){
+	var tname = src+"-template";
+	var template = Handlebars.compile( $( '#'+tname ).html() );
+	$('#' + src ).html(template(request));
+}
 
 function runRequest(request, callback,failCallback) {
 	$.ajax({  type: "POST",
@@ -304,86 +374,9 @@ function processFailure(xhr,status,err){
 		console.log(data);
 		console.log(status);
 		results.getDoc().setValue(JSON.stringify(data,null,4));
-	  updateConsole(data);
+		updateExample("sqlcl",data)
+
   }
-
-function updateConsole(data){
-			var jsonObj = data;
-			console.log(jsonObj);
-			//try and report the "repsonse" field
-			var statementText = jsonObj.items[0].statementText;
-			var responseArray = null;
-			var itemsArray = null;
-			var metadataArray =null;
-			var resultText = null;
-			var resultSetText = null;
-			if(jsonObj.items[0].hasOwnProperty('response')) {
-				responseArray = jsonObj.items[0].response;
-			}
-			if(jsonObj.items[0].hasOwnProperty('resultSet')) {
-				itemsArray = jsonObj.items[0].resultSet.items;
-			}
-			if(jsonObj.items[0].hasOwnProperty('resultSet')) {
-			 	metadataArray = jsonObj.items[0].resultSet.metadata;
-			}
-			if(responseArray !== null) {
-				resultText = processResponseArray(responseArray).trim();
-			}
-			if(itemsArray !==null && metadataArray !== null) {
-				resultSetText = processResultSet(itemsArray,metadataArray);
-			}
-			var consoleText = "> sql "+request.username+"/"+request.password+"@"+request.url;
-			consoleText = consoleText +"<br/>" + "SQL>"+request.sql.replace(/\n/g, "<br />");
-
-
-			if(resultSetText!==null && resultSetText.trim() !== ""){
-				consoleText = consoleText+"\n"+resultSetText;
-			}
-			$("#sqlcl").html(consoleText);
-}
-
-function consolePageWrap(text){
-	var htmlPage =  "<html><body style=\"background-color:black;color:white; white-space: nowrap;\"><pre>" + text + "</pre></body></html>";
-	return htmlPage;
-}
-
-function processResponseArray(responseArray){
-	var str = responseArray.join(" ").replace(/\r\n/g," ");
-	return str;
-}
-
-function processResultSet(items,metadata){
-	var resultSetTable ="<table>"+columnHeader(metadata) + rows(items)+"</table>";
-	return resultSetTable;
-}
-
-function columnHeader(metadata){
-	var columnHeaderRow = "<tr>";
-	for (index = 0; index < metadata.length; ++index) {
-		columnHeaderRow += "<td>"+metadata[index].columnName+"</td>";
-	}
-	columnHeaderRow += "</tr>";
-	return columnHeaderRow;
-}
-
-function rows(items){
-	var rows = "";
-	for (index = 0; index < items.length; ++index) {
-		rows += row(items[index]);
-	}
-	return rows;
-}
-
-function row(item){
-	var row = "<tr>";
-	for (var property in item) {
-	    if (item.hasOwnProperty(property)) {
-	        row += "<td>"+item[property]+"</td>";
-	    }
-	}
-	row += "</tr>";
-	return row;
-}
 
 </script>
 <script>
