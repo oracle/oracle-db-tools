@@ -339,7 +339,7 @@ function ApexExport()  {
 
             var sql = "begin ? := wwv_flow_utilities.export_workspace_to_clob(?, "+
                       "  case when ? ='Y' then true else false end, "+
-                      "  case when ? ='Y' then true else null end); "+
+                      "  case when ? ='Y' then true else false end); "+
                       " end;";
             var cstmt =  conn.prepareCall(sql);
 
