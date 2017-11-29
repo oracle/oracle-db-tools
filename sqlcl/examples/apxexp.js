@@ -4,8 +4,11 @@ var OracleCallableStatement = Java.type("oracle.jdbc.OracleCallableStatement");
 var OracleTypes             = Java.type("oracle.jdbc.OracleTypes");
 var BigDecimal              = Java.type("java.math.BigDecimal");
 var CopyOption              = Java.type("java.nio.file.StandardCopyOption");
-var Charset                 = Java.type("java.nio.charset.Charset")
-var BufferedReader          = Java.type("java.io.BufferedReader")
+var Charset                 = Java.type("java.nio.charset.Charset");
+var BufferedReader          = Java.type("java.io.BufferedReader");
+var FileSystems             = Java.type("java.nio.file.FileSystems");
+var Files                   = Java.type("java.nio.file.Files");
+
 function ApexExport()  {
     this.CmdName = "apxexp";
 
@@ -41,10 +44,12 @@ function ApexExport()  {
                 this.debug('Param:' + args[i])
                 if ( args[i].equalsIgnoreCase(this.CmdName)) {
                     // just skip it.
+                } else if (args[i].equalsIgnoreCase("-exportFolder")) {
+                    this.options.exportFolder = args[++i];
                 } else if (args[i].equalsIgnoreCase("-workspaceid")) {
                     this.options.workspaceID = args[++i];
                 } else if (args[i].equalsIgnoreCase("-workspace")) {
-                      this.options.workspaceName = args[++i];
+                    this.options.workspaceName = args[++i];
                 } else if (args[i].equalsIgnoreCase("-applicationid")) {
                     this.options.appID = args[++i];
                 } else if (args[i].equalsIgnoreCase("-debug")) {
@@ -100,6 +105,7 @@ function ApexExport()  {
 
     this.usage = function(){
             ctx.write("\nUsage "+this.CmdName+"  [options]  \n");
+            ctx.write("    -exportFolder:     Name of the folder where the files will be exported to\n");
             ctx.write("    -applicationid:    ID for application to be exported\n");
             ctx.write("    -workspaceid:      Workspace ID for which all applications to be exported or the workspace to be exported\n");
             ctx.write("    -workspace:        Case Sensative workspace name to export\n");
@@ -264,15 +270,28 @@ function ApexExport()  {
     }
     this.clob2file=function (clob,fName){
         var stream =  new BufferedReader(clob.getCharacterStream());
-
-       // get the path/file handle to write to
-       var path = java.nio.file.FileSystems.getDefault().getPath(fName);
-
-       // dump the file stream to the file
-       var bytes=0;
-         if (  ! path.toFile().exists() ||
+        var path; 
+       
+        // get the path/file handle to write to
+        if (this.options.exportFolder){
+            var folderPath = FileSystems.getDefault().getPath(this.options.exportFolder);
+            
+            // check if the export folder exists. If not create it.
+            if (!folderPath.toFile().isDirectory()){
+                Files.createDirectory(folderPath);
+            }
+            
+            path = FileSystems.getDefault().getPath(this.options.exportFolder, fName);
+        }
+        else{
+            path = FileSystems.getDefault().getPath(fName);
+        }
+       
+        // dump the file stream to the file
+        var bytes=0;
+        if (  ! path.toFile().exists() ||
                  (  this.options.replace && path.toFile().exists()  ))   {
-                var bw = java.nio.file.Files.newBufferedWriter(path,Charset.forName("UTF-8"))
+                var bw = Files.newBufferedWriter(path,Charset.forName("UTF-8"))
                 var line = null;
                 while((line = stream.readLine())!=null){
                     if ( ! ( this.options.skipDate &&  line.indexOf("--   Date and Time:") != 0  ) ) {
