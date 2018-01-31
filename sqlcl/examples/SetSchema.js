@@ -1,3 +1,8 @@
+//
+// Simple command to add "s <USER>" which issues
+// alter session set current_schema = <USER>
+//
+//
 // SQLCL's Command Registry
 var CommandRegistry = Java.type("oracle.dbtools.raptor.newscriptrunner.CommandRegistry");
 
