@@ -83,6 +83,10 @@ executeReturnListofList(<string>,binds)
 executeReturnList(<string>,binds)
       execute and returns and array ( rows ) of objects ( row )
 ~~~       
+~~~                   
+getLastException()
+      returns the sql exeception from the executeXYZ functions
+~~~       
 
 Examples:  [sql.js](https://github.com/oracle/Oracle_DB_Tools/blob/master/sqlcl/examples/sql.js)
 
