@@ -16,8 +16,8 @@ public class ParseScriptRunOneAtATime {
 	  public static void main(String[] args) throws SQLException, IOException {
 		    Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/XE", "klrice", "klrice");
 		    conn.setAutoCommit(false);
-
-        FileInputStream fin = new FileInputStream(new File("myfile.sql"));
+///Users/klrice/workspace_commons/sqlcl-java/
+		    FileInputStream fin = new FileInputStream(new File("myfile.sql"));
 		    ScriptParser parser = new ScriptParser(fin);
 		    
 		    ISQLCommand cmd;
