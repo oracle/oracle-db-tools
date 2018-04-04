@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="sql/lib/antlr-runtime.jar"/>
+	<classpathentry kind="lib" path="sql/lib/commons-codec.jar"/>
+	<classpathentry kind="lib" path="sql/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="sql/lib/dbtools-common.jar" sourcepath="/dbtools-commons"/>
+	<classpathentry kind="lib" path="sql/lib/dbtools-http.jar"/>
+	<classpathentry kind="lib" path="sql/lib/dbtools-net.jar"/>
+	<classpathentry kind="lib" path="sql/lib/dbtools-sqlcl.jar"/>
+	<classpathentry kind="lib" path="sql/lib/httpclient.jar"/>
+	<classpathentry kind="lib" path="sql/lib/httpcore.jar"/>
+	<classpathentry kind="lib" path="sql/lib/httpmime.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jackson-annotations.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jackson-core.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jackson-databind.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jdbcrest.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jline.jar"/>
+	<classpathentry kind="lib" path="sql/lib/jsch.jar"/>
+	<classpathentry kind="lib" path="sql/lib/low-level-api.jar"/>
+	<classpathentry kind="lib" path="sql/lib/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="sql/lib/oraclepki.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orai18n-collation.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orai18n-mapping.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orai18n-servlet.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orai18n-utility.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orai18n.jar"/>
+	<classpathentry kind="lib" path="sql/lib/orajsoda.jar"/>
+	<classpathentry kind="lib" path="sql/lib/osdt_cert.jar"/>
+	<classpathentry kind="lib" path="sql/lib/osdt_core.jar"/>
+	<classpathentry kind="lib" path="sql/lib/stringtemplate.jar"/>
+	<classpathentry kind="lib" path="sql/lib/ucp.jar"/>
+	<classpathentry kind="lib" path="sql/lib/xdb6.jar"/>
+	<classpathentry kind="lib" path="sql/lib/xmlparserv2-sans-jaxp-services.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
