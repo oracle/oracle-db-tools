@@ -19,7 +19,9 @@ public class RunMyScript {
 
     // #setup the context
     ScriptRunnerContext ctx = new ScriptRunnerContext();
-
+		    
+    // set the output max rows
+		ResultSetFormatter.setMaxRows(10000);
     // #set the context
     sqlcl.setScriptRunnerContext(ctx);
     ctx.setBaseConnection(conn);
