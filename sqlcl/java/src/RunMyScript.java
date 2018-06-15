@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 import oracle.dbtools.raptor.newscriptrunner.ScriptExecutor;
 import oracle.dbtools.raptor.newscriptrunner.ScriptRunnerContext;
+import oracle.dbtools.db.ResultSetFormatter;
+
 
 public class RunMyScript {
 
