@@ -37,7 +37,7 @@ public class ParseScriptRunOneAtATime {
 				sr.run(cmd);
 				// check success/failure of the command
 
-				String errMsg = (String) ctx.getProperty(ctx.ERR_MESSAGE);
+				String errMsg = (String) ctx.getProperty(ScriptRunnerContext.ERR_MESSAGE);
 				if ( errMsg != null   ){
 					// react to a failure
 					System.out.println("**FAILURE**" + errMsg);
