@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Part number: Ennnnn-01 -->
+        <!-- Published date: Month Year -->
+        <!-- Template date: October 15, 2018 -->
+        <!-- Put the content ID of this OBE between the empty quotation marks for 'content' below -->
+        <meta name="contentid" content="">
+        <meta content="text/html; charset=utf-8" http-equiv="content-type">
+        <!-- The title below is displayed on the browser tab, in search results, and in  history. It can be longer than the tutorial title in the <h1> element, below.-->
+		<!-- Use an imperative verb in the title. -->
+        <title>RESTful Services with ORDS, SQL Developer Web and Oracle Autonomous Database</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="robots" content="INDEX, FOLLOW">
+        <meta name="description" content="Put the description of the tutorial here.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/obe-lite.css">
+        <script src="js/jquery-1.11.0.min.js"></script>
+        <script src="js/jquery-ui-1.10.4.custom.js"></script>
+        <script src="js/jquery.tocify.jd.js"></script>
+        <script src="js/leftnav.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="w1024" style="min-height:55px; display:block;"> <a href="https://docs.oracle.com" class="oracle-logo">
+              <img src="img/oracle_doc_logo.png" alt="Oracle Documentation" style="max-width: none;" height="22" width="236"></a>
+            </div>
+        </header>
+        <!--end header-->
+
+        <div id="content">
+
+            <!-- The title below is displayed as the title at the top of the OBE page. It can be shorter than the title in the <title> element, above. -->
+			<!-- Use an imperative verb in the title. -->
+			<h1><img src="img/obe_tag.png" align="middle" alt="Oracle by Example branding">RESTful Services with ORDS, SQL Developer Web and Oracle Autonomous Database</h1>
+            <div class="w1024" style="clear:both; position:relative; margin-top:40px;">
+                <div class="navbackwide border-right"><!-- --></div>
+                <div id="shownav" title="Show Navigation" tabindex="0"><span class="fa fa-list"></span></div>
+                <div id="sidebar"><!-- -->
+                    <div class="left-nav-tut"><!-- -->
+                        <div id="hidenavw" title="Hide Navigation" tabindex="0"><span class="fa fa-close"></span></div>
+                        <div  id="navbar" class="left-nav-w"><!-- -->
+                            <div id="toc" class="tocify"><!-- --></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="bookContainer">
+                    <article>
+                        <section>
+                            <h2><img src="img/32_begin.png" alt="section 0" height="32" width="32" class="num_circ">Before You Begin</h2>
+                            <p>Oracle REST Data Services (ORDS) provides RESTful Web Services for your Oracle Autonomous Database. Automatic REST endpoints can be enabled to provide INSERT, UPDATE, DELETE, and SELECT access to your Oracle TABLEs. Custom SQL and PL/SQL operations backing your RESTful Services can also be defined. Responses are in JSON or optionally CSV or media resources.
+SQL Developer Web also provides a query interface for your Oracle Autonomous Database in your browser, making it easy to work with your new Oracle service, with minimal setup and configuration on your local environment.</p>
+                            <p>In this lab you will learn the following:</p>
+                            <ol>
+                              <li>Access an Autonomous Database using SQL Developer Web</li>
+                              <li>‘Query’ a table via the REST Endpoints</li>
+                              <li> Generate Swagger/JSON for the TABLE API </li>
+                              <li> Use cURL to PUT changes to an existing record</li>
+                              <li> Use cURL to POST a new record</li>
+                            </ol>
+                            <h3>Background</h3>
+                            <ul>
+                              <li><strong>Installed Software:</strong></li>
+                              <li>Oracle Autonomous Database </li>
+                              <li> Oracle SQL Developer Web 19.1</li>
+                              <li> Browser Support: Chrome, Mozilla, Internet Explorer, Safari</li>
+                              <li>cURL Command Tool </li>
+                               <li><strong>Time:</strong> 20 minutes</li>
+                            </ul>
+                          
+                           
+                            <h3>What Do You Need?</h3>
+                            <p>This Hands on Lab will be used at Oracle Open World 2019. The computer room for this lab is set up where your SQL Developer Web access will correspond to your seat number. For example, if you are at seat 1, your username will be <strong>ords_lab1</strong>. If you're at seat 2, it will be <strong>ords_lab2</strong> and so on. All user passwords are the same. The examples in this lab will be using the <strong>ords_lab1</strong> user so the images on your screen will be slightly different.</p>
+                            <p></p> 
+                        </section>
+
+                        <!-- ========================================================================================================================= -->
+                        <section>
+                            <hr>
+                            <h2 id="section_1" role="button" style="text-align: left;"><img src="img/32_1.png" alt="section 1" height="32" width="32" class="num_circ">Access an Autonomous Database using SQL Developer Web</h2>
+                            <p>If you are at seat 1, the access url and username will correspond to your seat number. The examples for this lab will be for the <strong>ords_lab1 </strong>user. </p>
+                            <ol>
+                                <li>Open the browser on the desktop and enter the following SQL Developer Web url:                                
+                                  <p>https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/_sdw/</p>
+                                <p class="note"  style="color:red;"><em>Note that if you are  at a different seat, your user will be different. Replace the <strong>ords_labx</strong> in the url to your correct user.</em></li>
+                                
+                              <figure><img src="img/1.1.png" alt="Description of sample-image-1.png follows">
+                              
+                              </figure></li>
+                                          <li>This will take you to the SQL Developer Web login screen. Enter the following username and password and sign in.
+                                            <p>Username: <strong>ords_labx </strong></p>
+                                            <p>Password: 
+                                            aaaaBBbcc987654
+                                            <p class="note" style="color:red;"><em>Note that if you are  at a different seat, your username will reflect your seat number. It can be <strong>ords_lab2</strong>, <strong>ords_lab3</strong> and so on. The password is the same for all users. </em></em></li>
+                                
+                              <figure><img src="img/1.2.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                              </li> </ol></hr></section>
+                              
+                               <hr>
+                        <section>
+                            <h2 id="section_2" role="button" style="text-align: left;"><img src="img/32_2.png" alt="section 2" height="32" width="32" class="num_circ">‘Query’ a table via the REST Endpoints</h2>
+                          <ol>
+                        
+                               <li>You are now in the SQL Developer Web Home page. The Home page contains widgets that provide a general overview of the activity and status in SQL Developer Web. You will also see  tabs for the Worksheet and Data Modeler page. The Worksheet page provides a code editor that is used to enter and execute SQL and PL/SQL statements. The Data Modeler page provides an integrated version of Oracle SQL Developer Data Modeler with basic reporting features.                               </li>
+                                
+                              <figure><img src="img/1.3.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                              
+                           </li>
+                               <li>In this lab, you will be working in the Worksheet page so click on Worksheet. The first time you access the Worksheet page, a Help widget will display  a quick tutorial on the key features in the Worksheet. Click on Next go to next item or x out of the widget.                               </li>
+                                
+                              <figure><img src="img/1.4.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>The Worksheet page consists of the left pane for navigating worksheets and objects, the editor for executing SQL statements, and the output pane for viewing the results.
+                               <p>The table ORDERS is displayed. Expand the table to view all the fields. </li>
+                                
+                              <figure><img src="img/1.5.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>To view all the rows in the ORDERS table, navigate to the worksheet and enter the following query. Click on Run to excecute the statement. 
+                              <p> Select * from orders </li>
+                                
+                              <figure><img src="img/1.6.png" alt="Description of sample-image-1.png follows"></figure>
+                               <li>The results are displayed in the Query Result pane.
+                             </li>
+                                
+                              <figure><img src="img/1.7.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>In Oracle Autonomous Database databases, the ADMIN user is pre-enabled for SQL Developer Web. To use Oracle SQL Developer Web, you must sign in as a database user whose schema has been enabled for SQL Developer Web.
+<p>In this lab, the   schema ords_labx and the ORDERS table is already REST enabled. This allows for REST calls to be executed on the ORDERS table. </p>
+                               <p>Enter the following url  in the browser to query all the data in the ORDERS table. </p> 
+                               <p>https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/                               </p>
+                               <p>The ORDERS data is displayed in the browser in a JSON format.  </p>
+                                
+                              <figure><img src="img/1.9.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>You can add a filter to your query. Let's select all rows where the Priority = Medium. 
+                                 <p>Enter the following url  in the browser: </p> 
+                               <p>https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/?q={%22LO_ORDERPRIORITY%22:%223-MEDIUM%20%20%20%20%20%20%20%22}</p>
+                                <p class="note" style="color:red;">Note that if you are  at a different seat, your schema will reflect your seat number. You will need to replace the <strong>ords_labx</strong> to either <strong>ords_lab2</strong>, <strong>ords_lab3</strong> and so on. This applies to all urls that are used as examples in the lab.
+                              </li>
+                                
+                              <figure><img src="img/1.10.png" alt="Description of sample-image-1.png follows"></figure>
+                          </ol>
+                      </section></hr>
+                              
+                                     <hr>
+                        <section>
+                          <h2 id="section_3" role="button" style="text-align: left;"><img src="img/32_3.png" alt="section 3" height="32" width="32" class="num_circ">Generate Swagger/JSON for a TABLE API</h2>
+                          <ol>
+                        
+                               <li>REST Enabled tables include an endpoint for getting its REST API information. Enter the following URL to get the ORDS table OpenAPI json documentation.
+                                 <p> https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/open-api-catalog/orders/ </p>                                </li>
+                                
+                              <figure><img src="img/1.11.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                              
+                               <li><p> Once you have generated your table API, you can use Swagger to return a YAML or JSON that contains a detailed description of your entire API. </p>  <p> Open a new browser tab and enter the following url to take your to a Swagger Editor: </p> <p> http://editor.swagger.io/</p>                              </li>
+                                
+                              <figure><img src="img/1.12.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>
+                                 <p> The ORDERS API is automatically displayed in the Swagger Editor. Scroll down right side pane to view the the ORDS generated API for ORDERS. Click on any of the actions like GET to display more detail.</p>   </li>
+                                
+                              <figure><img src="img/1.14.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            
+                        </ol></section>
+                       
+                      <hr>
+                        <section>
+                            <h2 id="section_4" role="button" style="text-align: left;"><img src="img/32_4.png" alt="section 4" height="32" width="32" class="num_circ">Use cURL to PUT changes to an existing record </h2>
+                            <ol>
+                                 <li>In this section, you will make an update to an existing record. Enter the following url to go to a single record. The order priority is currently set at HIGH, update the order priority to URGENT.
+                                   <p> https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/?q={%22lo_orderkey%22:4411661895}</p>                           
+                                 
+                                 </li> <figure><img src="img/1.17.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>Scroll down the page and you will see the generated record url. Copy this url and paste it to a Text Editor like Notepad. You will need it for your cURL command in the next steps.
+                          
+ </li>
+                                 <figure><img src="img/1.29.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                                 
+                                 <li>The json can be copied directly from the browser and saved to a file. Copy the following json and paste it to a Text Editor.
+                                   <p>    <p>{
+      "lo_orderkey": 4411661895,
+      "lo_linenumber": 1,
+      "lo_custkey": 3228559,
+      "lo_partkey": 721578,
+      "lo_suppkey": 92419,
+      "lo_orderdate": "1993-07-23T00:00:00Z",
+      "lo_orderpriority": "2-HIGH         ",
+      "lo_shippriority": "0",
+      "lo_quantity": 3,
+      "lo_extendedprice": 479862,
+      "lo_ordtotalprice": 453468,
+      "lo_discount": 10,
+      "lo_revenue": 431875,
+      "lo_supplycost": 95972,
+      "lo_tax": 5,
+      "lo_commitdate": 19931011,
+      "lo_shipmode": "AIR       "
+} </p>    </p>                     
+ </li>
+                                 <figure><img src="img/1.18.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                              <li>Update the record by changing the order priority to URGENT. Find the line: <em>"lo_orderpriority": "2-HIGH         ",</em> in the text file and replace it with the following:
+                                <p> <strong>"lo_orderpriority": "1-URGENT", </strong></p></li>
+                                  
+                              <figure><img src="img/1.20.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                                
+                              <li>Save the file as <strong>put.txt</strong> and save it to the Desktop.
+                         
+                              </li>
+                                
+                              <figure><img src="img/1.19.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>REST endpoints can be defined along with basic operations including create, query, update and delete. The PUT method will be used to apply this update. You will use the command-line tool cURL to transfer the data.  
+                                   <p> Go to the Start Menu and type cmd to open the Command Prompt.</p>                                
+                              </li>
+                                
+                              <figure><img src="img/1.15.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>Type the following to  navigate to the Desktop.
+                                   <p> cd Desktop</p>                                
+                              </li>
+                                
+                              <figure><img src="img/1.16.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>Executing the following cURL command will apply the update to the record. This command is an example for the <strong>ords_lab1</strong> user. You will need to modify it to reflect your username and the local file path where the put.txt is saved to.
+<p>Copy and paste the cURL command to a Text Editor or in the command line and <strong>apply the changes to the bolded text before executing it</strong>.
+                                <em style="color:red;">Note that back in Step 2, you saved a generated record url. This is the where you would apply that url.</em>
+</p> </br>
+<p>
+curl -u <strong>ords_labx</strong>:aaaaBBbcc987654 -H "Content-Type: application/json" -X PUT <strong style="color:red;">https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/ords_labx/orders/AAAI7%2BAAAAAAAMRAAD</strong> -d <strong>@c:\users\ahnguyen\desktop\put.txt </strong>-k                                 
+                              </p></br>
+                              </li>
+                                
+                              <figure><img src="img/1.21.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            
+                                <li>After executing the command, the Response will be displayed. The order priority is now changed to URGENT. </li>
+                                <figure><img src="img/1.22.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                                <li>Go back to the browser and enter the following url to view the changes in the record. Remember to modify the<strong> ords_labx</strong> to your user.
+                                  <p>https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/?q={%22lo_orderkey%22:4411661895} </p></li>
+                                <figure><img src="img/1.23.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            </ol>
+                        </section>
+                        <hr>
+                        <section>
+                            <h2 id="section_5" role="button" style="text-align: left;"><img src="img/32_5.png" alt="section 5" height="32" width="32" class="num_circ">Use cURL to request a POST</h2>
+                            <ol>
+                                   </figure>
+                                <li>The POST method can be used to insert a new record to a table. Copy the following json and paste it into a Text Editor.
+                                  <p><p>
+                                {
+      "lo_orderkey": 4411555555,
+      "lo_linenumber": 1,
+      "lo_custkey": 3228559,
+      "lo_partkey": 721578,
+      "lo_suppkey": 92419,
+      "lo_orderdate": "2019-10-01T00:00:00Z",
+      "lo_orderpriority": "1-URGENT",
+      "lo_shippriority": "0",
+      "lo_quantity": 3,
+      "lo_extendedprice": 479862,
+      "lo_ordtotalprice": 453468,
+      "lo_discount": 10,
+      "lo_revenue": 431875,
+      "lo_supplycost": 95972,
+      "lo_tax": 5,
+      "lo_commitdate": 19931011,
+      "lo_shipmode": "AIR       "
+} </p> <p></li>
+                                <figure><img src="img/1.24.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                                <li>Save it to the Desktsop as post.txt.</li>
+                                
+                                <figure><img src="img/1.25.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                               <li>Executing following cURL command will insert the new record. This command is an example for the ords_lab1 user. You will need to modify it to reflect your username and the local file path where the post.txt is saved to.
+                                 <p>Copy and paste the cURL command to a Text Editor or in the command line and <strong>apply the changes to the bolded text before executing it</strong>. </p><p>
+                                 <p>
+curl -u <strong>ords_labx</strong>:aaaaBBbcc987654 -H "Content-Type: application/json" -X POST https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/ -d <strong>@c:\users\ahnguyen\Desktop\post.txt</strong> -k </p></br>
+                               </li>
+                                
+                                <figure><img src="img/1.26.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                              <li>After executing the command, the Response will be displayed. The new record has been added and a url to the record is generated. This is the generated url for ords_lab1 user. Your generated url will be slightly different. Copy this url to view the record in the browser.
+                                <p>https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/orders/AAAI7%2BAAAAAAAMWAAC</li>
+                                <figure><img src="img/1.27.png" alt="Description of sample-image-1.png follows">
+                                  
+                                </figure>
+                              <li>Go  to the browser and paste the url. The new record will be displayed.</li>
+                                <figure><img src="img/1.28.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            </ol>
+                            <p>Congratulations! You have successfully completed the lab: RESTful Services with ORDS, SQL Developer Web and Oracle Autonomous Database.</p>
+                          <p>&nbsp;</p>
+                        </section>
+                      
+                        <hr>
+                        <section>
+							<!-- Include the More Information section only in a standalone tutorial or in the final lab or tutorial in a series (not in a learning path) -->
+                            <h2 id="more_info" role="button" style="text-align: left;"><img src="img/32_more.png" alt="more information" height="32" width="32" class="num_circ">Want to Learn More?</h2>
+                            <ul>
+                                <li><a href="https://docs.oracle.com/en/database/oracle/sql-developer-web/" target="_blank">SQL Developer Documentation</a></li>
+                                <li><a href="https://www.oracle.com/database/technologies/appdev/sql-developer.html" target="_blank">Oracle SQL Developer</a></li>
+                                <li><a href="https://www.oracle.com/database/technologies/appdev/rest.html" target="_blank">Oracle REST Data Services</a></li>
+                            </ul>
+                        </section>
+                        <hr>
+                    </article>
+                </div>
+                <br class="clearfloat">
+            </div>
+        </div>
+        <!--close main--> 
+        <!--end content-->
+        <div class="footer-container ">
+            <div style="max-width: 994px; padding:10px 0 0 17px;">
+                <footer class="footer-list">
+                    <ul>
+                        <li> <a href="https://www.oracle.com/corporate/index.html" target="_blank">About Oracle</a> </li>
+                        <li> <a href="https://www.oracle.com/us/corporate/contact/index.html" target="_blank">Contact Us</a> </li>
+                        <li> <a href="https://www.oracle.com/us/legal/index.html" target="_blank">Legal Notices</a> </li>
+                        <li> <a href="https://www.oracle.com/us/legal/terms/index.html" target="_blank">Terms of Use</a> </li>
+                        <li> <a href="https://www.oracle.com/us/legal/privacy/index.html" target="_blank">Your Privacy Rights</a> </li>
+                        <li> <a href="https://www.oracle.com/pls/topic/lookup?ctx=cpyr&id=en">Copyright © 2018, Oracle and/or its affiliates. All rights reserved.</a></li>
+                    </ul>
+                </footer>
+            </div>
+            <script type="text/javascript" src="https://www.oracleimg.com/us/assets/metrics/ora_docs.js"></script>
+        </div>
+        <!-- OBE Dialog Box code 10/15/2018 -->
+        <!-- DO NOT ALTER THE CODE BELOW   -->
+        <div id="lpModal" class="modal">
+            <!-- Modal hdr and body -->
+            <div id="obe_dialog" class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close">  
+                        <span class="close">&times;</span>
+                    </a>
+                    <h1>Associated Learning Paths</h1>
+                </div>
+                <div id="dialog-content" >
+                </div>
+                <div id="dialog-close" class="closeBtn">
+                    <a href="#" class="close2">  
+                        <p class="close2"> 
+                             <span>&nbsp;&nbsp;View&nbsp;&nbsp;</span> 
+                        </p>
+                    </a>  
+                </div>
+            </div>   
+        </div>
+        <!-- END OBE Dialog Box code -->
+    </body>
+</html>
