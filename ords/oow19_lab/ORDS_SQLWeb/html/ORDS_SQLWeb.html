@@ -157,20 +157,38 @@ SQL Developer Web also provides a query interface for your Oracle Autonomous Dat
                           <h2 id="section_3" role="button" style="text-align: left;"><img src="img/32_3.png" alt="section 3" height="32" width="32" class="num_circ">Generate Swagger/JSON for a TABLE API</h2>
                           <ol>
                         
-                               <li>REST Enabled tables include an endpoint for getting its REST API information. Enter the following URL to get the ORDS table OpenAPI json documentation.
+                               <li>REST Enabled tables include an endpoint for getting its REST API information. Enter the following URL to get the ORDS table OpenAPI json documentation for ORDERS.
                                  <p> https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/open-api-catalog/orders/ </p>                                </li>
                                 
                               <figure><img src="img/1.11.png" alt="Description of sample-image-1.png follows">
                                             
                               </figure>
                               
-                               <li><p> Once you have generated your table API, you can use Swagger to return a YAML or JSON that contains a detailed description of your entire API. </p>  <p> Open a new browser tab and enter the following url to take your to a Swagger Editor: </p> <p> http://editor.swagger.io/</p>                              </li>
+                               <li>
+                                 <p> Once you have generated the table API, you can use Swagger to return a YAML or JSON that contains a detailed description of your entire API. </p>  <p> Open a new browser tab and enter the following url to take you to the Swagger Editor: </p> <p> http://editor.swagger.io/</p>                              </li>
                                 
-                              <figure><img src="img/1.12.png" alt="Description of sample-image-1.png follows">
+                              <figure><img src="img/1.30.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            <li>
+                                 <p>Copy the url to the  OpenAPI json to import it into Swagger.
+                                 <p>
+                                 https://xqopsfr7suoesft-ordsatp01.adb.us-phoenix-1.oraclecloudapps.com/ords/<strong>ords_labx</strong>/open-api-catalog/orders/ </p>
+                                  </p>Click on File and select Import URL.</li>
+                                
+                              <figure><img src="img/1.31.png" alt="Description of sample-image-1.png follows">
                                             
                               </figure>
                                <li>
-                                 <p> The ORDERS API is automatically displayed in the Swagger Editor. Scroll down right side pane to view the the ORDS generated API for ORDERS. Click on any of the actions like GET to display more detail.</p>   </li>
+                                 <p> Paste the OpenAPI json url and click OK.</p>   </li>
+                                
+                              <figure><img src="img/1.32.png" alt="Description of sample-image-1.png follows">
+                                            
+                              </figure>
+                            
+                               <li>
+                                 <p> The ORDERS API is now displayed in the Swagger Editor. Scroll down  to view the the ORDS generated API for ORDERS. Click on any of the actions like GET to display more detail.</p>   
+                            </li>
                                 
                               <figure><img src="img/1.14.png" alt="Description of sample-image-1.png follows">
                                             
