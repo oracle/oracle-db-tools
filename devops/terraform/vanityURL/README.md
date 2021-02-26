@@ -13,7 +13,7 @@ It creates the following:
 
 The Variables.tf file can be used to tell terraform what ADB instance you are going to use and what your custom domain is named.
 
-# Two Versions
+## Two Versions
 
 There are 2 terraform files in the directory. You can only have one when running.
 
@@ -29,11 +29,11 @@ both files use an always free load balancer but can be changed
 
 shape = "10Mbps-Micro"
 
-# IP Addresses and Domain Name Providers
+## IP Addresses and Domain Name Providers
 
 You will need to update your domain register to point to the public IPs of the load balancer as this script runs. There is a sleep point for 210 seconds in the setup terraform script where you can perform this procedure. You can increase this timeout if needed.
 
-# SSH Keys
+## SSH Keys
 
 In the setup terraform script, you will need to supply the path to the SSH keys you wish to use. Find the **private_key** and **ssh_authorized_keys** attributes and set as appropriate.
 For example, if I was using the OCI cloud shell and had my keys there, my path would be similar to:
@@ -42,7 +42,7 @@ ssh_authorized_keys = file("/home/bspendol/terraform/compute.pub")
 
 private_key = file("/home/bspendol/terraform/compute.ppk")
 
-# Setting up the PAR URLs for the static files
+## Setting up the PAR URLs for the static files
 
 In the terraform scripts, you will see entries for
 APEX_PAR_URL
