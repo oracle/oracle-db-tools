@@ -6,7 +6,7 @@ SQLcl is the core scripting library for Oracle SQL Developer.  That library has 
 
 # SQLcl Download
 
-The tool can be downloaded from Oracle.com here: [http://www.oracle.com/technetwork/developer-tools/sqlcl/overview/index.html]()
+The tool can be downloaded from Oracle.com here: [http://www.oracle.com/technetwork/developer-tools/sqlcl/overview/index.html](http://www.oracle.com/technetwork/developer-tools/sqlcl/overview/index.html)
 
 # Scripting
 
