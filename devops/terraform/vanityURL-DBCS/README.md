@@ -1,5 +1,8 @@
 # Oracle Database Tools - DevOPs - Terraform - Vanity URLs for DBCS 
 
+WORK IN PROGRESS!!!!
+
+
 ## Prerequisites
 
 You must have an existing DBCS instance
