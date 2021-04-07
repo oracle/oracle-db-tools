@@ -1,0 +1,86 @@
+pipeline {
+  agent any
+  stages {
+    stage('Start') {
+      when {
+        expression {
+          return env.ref != 'masterMan'
+        }
+
+      }
+      steps {
+        script {
+          currentBuild.upstreamBuilds?.each { b ->
+          echo "Upstream build: ${b.getFullDisplayName()}"
+        }
+      }
+
+    }
+  }
+
+  stage('preparation') {
+    steps {
+      echo 'ORZ-000 ORA'
+      script {
+        def buildCause = currentBuild.getBuildCauses()[0].shortDescription
+        echo "Current build was caused by: ${buildCause}\n"
+      }
+
+    }
+  }
+
+  stage('Some Logic') {
+    steps {
+      script {
+        echo("${env.BUILD_NUMBER}")
+
+        emailext(attachLog: true, body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}", from: "${env.admin_email}", replyTo: "${env.admin_email}", to: "${env.admin_email}", subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}")
+
+
+        if (env.ref == 'main') {
+          echo("if")
+        } else {
+          echo("else")
+        }
+      }
+
+    }
+  }
+
+  stage('Check Logs') {
+    steps {
+      script {
+        if (manager.logContains('.*ORA-.*')) {
+          error("Build failed due to ORA Errors")
+        }
+      }
+
+    }
+  }
+
+  stage('Archive') {
+    steps {
+      sh """echo BUILD_ID=${env.BUILD_NUMBER} >> ./jank.spin"""
+      sh """echo ARTIFACT_URL=http://URL_OF_JENKINS_INSTANCE/job/jenkinsLogic/job/main/${env.BUILD_NUMBER}/artifact/ >> ./jank.spin"""
+      sh 'zip -r build.zip . -x \'*.git*\''
+      archiveArtifacts '**/build.zip'
+      archiveArtifacts '**/jank.spin'
+      archiveArtifacts(artifacts: '**/jank.spin.deploy', allowEmptyArchive: true)
+    }
+  }
+
+}
+environment {
+  admin_email = 'databasecicd@gmail.com'
+}
+post {
+  unsuccessful {
+    echo 'unsuccessful'
+  }
+
+  success {
+    echo 'success'
+  }
+
+}
+}

@@ -1,0 +1,173 @@
+{
+    "expectedArtifacts": [],
+    "keepWaitingPipelines": false,
+    "lastModifiedBy": "anonymous",
+    "limitConcurrent": false,
+    "parameterConfig": [],
+    "spelEvaluator": "v4",
+    "stages": [
+      {
+        "failPipeline": true,
+        "instructions": "which environment",
+        "judgmentInputs": [
+          {
+            "value": "DEV"
+          },
+          {
+            "value": "UAT"
+          },
+          {
+            "value": "PROD"
+          }
+        ],
+        "name": "deployment",
+        "notifications": [],
+        "refId": "1",
+        "requisiteStageRefIds": [
+          "7"
+        ],
+        "stageEnabled": {
+          "expression": "'${ branch }' == 'main'",
+          "type": "expression"
+        },
+        "type": "manualJudgment"
+      },
+      {
+        "name": "Deploy to Dev",
+        "preconditions": [
+          {
+            "context": {
+              "expression": "${#judgment(\"deployment\") == 'DEV'}"
+            },
+            "failPipeline": false,
+            "type": "expression"
+          }
+        ],
+        "refId": "2",
+        "requisiteStageRefIds": [
+          "1"
+        ],
+        "type": "checkPreconditions"
+      },
+      {
+        "name": "Deploy to UAT",
+        "preconditions": [
+          {
+            "context": {
+              "expression": "${#judgment(\"deployment\") == 'UAT'}"
+            },
+            "failPipeline": false,
+            "type": "expression"
+          }
+        ],
+        "refId": "4",
+        "requisiteStageRefIds": [
+          "1"
+        ],
+        "type": "checkPreconditions"
+      },
+      {
+        "name": "Deploy to Prod",
+        "preconditions": [
+          {
+            "context": {
+              "expression": "${#judgment(\"deployment\") == 'PROD'}"
+            },
+            "failPipeline": false,
+            "type": "expression"
+          }
+        ],
+        "refId": "5",
+        "requisiteStageRefIds": [
+          "1"
+        ],
+        "type": "checkPreconditions"
+      },
+      {
+        "failOnFailedExpressions": true,
+        "name": "Evaluate Variables",
+        "refId": "6",
+        "requisiteStageRefIds": [],
+        "type": "evaluateVariables",
+        "variables": [
+          {
+            "key": "stage",
+            "value": "${ trigger.properties['STAGE']}"
+          },
+          {
+            "key": "branch",
+            "value": "${scmInfo.branch}"
+          }
+        ]
+      },
+      {
+        "name": "Check Repo Status",
+        "preconditions": [
+          {
+            "cloudProvider": "oracle",
+            "context": {
+              "expression": "'${ stage }' == 'PROD'",
+              "failureMessage": "Repository is not enabled for deployment"
+            },
+            "failPipeline": true,
+            "type": "expression"
+          }
+        ],
+        "refId": "7",
+        "requisiteStageRefIds": [
+          "6"
+        ],
+        "type": "checkPreconditions"
+      },
+      {
+        "continuePipeline": false,
+        "failPipeline": true,
+        "job": "devDeploy",
+        "master": "ociJenkins",
+        "name": "JenkinsDevPipe",
+        "parameters": {},
+        "refId": "8",
+        "requisiteStageRefIds": [
+          "2"
+        ],
+        "type": "jenkins"
+      },
+      {
+        "continuePipeline": false,
+        "failPipeline": true,
+        "job": "devDeploy",
+        "master": "ociJenkins",
+        "name": "JenkinsUATPipe",
+        "parameters": {},
+        "refId": "9",
+        "requisiteStageRefIds": [
+          "4"
+        ],
+        "type": "jenkins"
+      },
+      {
+        "continuePipeline": false,
+        "failPipeline": true,
+        "job": "devDeploy",
+        "master": "ociJenkins",
+        "name": "JenkinsProdPipe",
+        "parameters": {},
+        "refId": "10",
+        "requisiteStageRefIds": [
+          "5"
+        ],
+        "type": "jenkins"
+      }
+    ],
+    "triggers": [
+      {
+        "enabled": true,
+        "expectedArtifactIds": [],
+        "job": "jenkinsLogic/job/main",
+        "master": "ociJenkins",
+        "propertyFile": "jank.spin",
+        "type": "jenkins"
+      }
+    ],
+    "updateTs": "1617304409240"
+  }
