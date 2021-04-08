@@ -4,7 +4,7 @@ This set of directories will contain samples of code for CICD pipelines, Terrafo
 
 On April 7th, 2021, we had a web conference around these topics.
 
-[](https://youtu.be/P3La7ig37CU)
+https://www.youtube.com/watch?v=P3La7ig37CU
 
 ### Contents:
 
