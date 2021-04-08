@@ -6,6 +6,8 @@ On April 7th, 2021, we had a web conference around these topics.
 
 https://www.youtube.com/watch?v=P3La7ig37CU
 
+[![Alt text](https://img.youtube.com/vi/P3La7ig37CU/0.jpg)](https://www.youtube.com/watch?v=P3La7ig37CU)
+
 ### Contents:
 
 #### Pipelines
