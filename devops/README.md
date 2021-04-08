@@ -6,7 +6,7 @@ On April 7th, 2021, we had a web conference around these topics.
 
 https://www.youtube.com/watch?v=P3La7ig37CU
 
-[![Alt text](https://img.youtube.com/vi/P3La7ig37CU/0.jpg)](https://www.youtube.com/watch?v=P3La7ig37CU)
+[![Watch the video](https://img.youtube.com/vi/P3La7ig37CU/0.jpg)](https://www.youtube.com/watch?v=P3La7ig37CU)
 
 ### Contents:
 
@@ -20,6 +20,12 @@ Here we have sample code for using terraform in OCI for the following tasks:
  3. Simple ORDS setup: Create a VM with ORDS attached to a DBCS instance
 
 
-Also, here is a lizard in a wizard outfit:
+
+
+
+
+
+
+###### Also, here is a lizard in a wizard outfit:
 
 ![4POfp](https://user-images.githubusercontent.com/69256666/114067567-ab08c000-9838-11eb-92d0-629615ff0b0d.jpg)
