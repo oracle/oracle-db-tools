@@ -3,7 +3,7 @@
 This set of directories will contain samples of code for CICD pipelines, Terraform scrpits for easy setup in OCI, liquibase examples as well as other CICD and DevOps related artifacts.
 
 On April 7th, 2021, we had a web conference around these topics.
-[](youtube:rvxTbTuUm5k)
+[](youtube:P3La7ig37CU)
 
 
 ### Contents:
