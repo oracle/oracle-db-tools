@@ -2,12 +2,20 @@
 
 This set of directories will contain samples of code for CICD pipelines, Terraform scrpits for easy setup in OCI, liquibase examples as well as other CICD and DevOps related artifacts.
 
+On April 7th, 2021, we had a web conference around these topics.
+[](youtube:rvxTbTuUm5k)
+
+
 ### Contents:
 
+#### Pipelines
+This directory contains samples of code for Jenkins and Spinnaker for DB/APEX CICD
 
-
-
-
+#### Terraform
+Here we have sample code for using terraform in OCI for the following tasks:
+ 1. Vanity URL with ADB: Create a user managed ORDS instance on a compute VM for an autonomous DB and custom domain name using Let's Encrypt
+ 2. Vanity URL with DBCS: Create a user managed ORDS instance on a compute VM for a DBCS instance (VM, BM or ExaCS) and custom domain name using Let's Encrypt
+ 3. Simple ORDS setup: Create a VM with ORDS attached to a DBCS instance
 
 
 Also, here is a lizard in a wizard outfit:
