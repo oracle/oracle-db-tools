@@ -1,8 +1,8 @@
-## DevOPs DB Tools Examples and Samples
+# DevOPs DB Tools Examples and Samples
 
 This set of directories will contain samples of code for CICD pipelines, Terraform scrpits for easy setup in OCI, liquibase examples as well as other CICD and DevOps related artifacts.
 
-# Contents:
+### Contents:
 
 
 
