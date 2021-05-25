@@ -1,4 +1,4 @@
-# Working with ORDS Examples
+# Working with Oracle REST Data Services (ORDS) Examples
 
 ## Current Livelabs
 
