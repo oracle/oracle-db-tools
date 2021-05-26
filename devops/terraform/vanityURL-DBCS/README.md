@@ -1,44 +1,140 @@
 # Oracle Database Tools - DevOPs - Terraform - Vanity URLs for DBCS 
 
-WORK IN PROGRESS!!!!
-
 
 ## Prerequisites
 
-You must have an existing DBCS instance
-There must be an egress rule on the subnet where the DBCS instance lives for incoming 1521 traffic from the ORDS tier
-The Variables.tf file needs to be completely filled out
+- You must have an existing DBCS instance
+- There must be an egress rule on the subnet where the DBCS instance lives for incoming 1521 traffic from the ORDS tier or future ORDS tier
+- The variables.tf file needs to be completely filled out
+- Filled out the ords_params.properties with your database connect info
+- Have registered a domain name
 
 ## End Prerequisites
 
-This project is a terraform script to help register a Vanity URL on an ADB instance in OCI.
+This project is a terraform script to help deploy ORDS and register a Vanity URL on a VM/ExaCS DB instance in OCI.
 
 It creates the following:
-- VCN and Public Subnet
+- VCN (or use existing one) and Public Subnet
 - Security Lists for access over 443 and 8080
 - A Load Balancer
 - A compute instance (full or micro)
-- Installs ORDS, SQLcl and stages the APEX images
+- Installs ORDS
 - Uses LetsEncrypt to get the certs for your customer domain
-- Starts up ORDS connected to an ADB instance on 443 with the certs installed
+- Starts up ORDS on 443 with the certs installed
 
-The Variables.tf file can be used to tell terraform what ADB instance you are going to use and what your custom domain is named.
 
-## Two Versions
+**Once the Load Balancer is up and running, you will need to take the public IP and change the DNS records to point to your custom domain**
 
-There are 2 terraform files in the directory. You can only have one when running.
+For example, here at hover.com (not getting paid by them), i would edit the 192.168.0.0 to be the public IP of the Load Balancer
 
-completeSetupFullVM is for full compute instance for ORDS
+![hover.com image](./images/hover.png)
 
-shape = "VM.Standard.E3.Flex"
 
-completeSetupMicroVM is for always free compute for ORDS
+## Compute/LB Versions for variables.tf file
 
-shape = "VM.Standard.E2.1.Micro"
+**Micro**
+```
+    shape = "VM.Standard.E2.1.Micro"
+```
+**E4**
+```
+	shape = "VM.Standard.E4.Flex"
+	shape_config {
+		memory_in_gbs = "16"
+		ocpus = "1"
+	}
+```
 
-both files use an always free load balancer but can be changed
+**A1**
+```
+	shape = "VM.Standard.A1.Flex"
+	shape_config {
+		memory_in_gbs = "24"
+		ocpus = "4"
+	}
+```
+**Load Balancer**
 
-shape = "10Mbps-Micro"
+This file uses an always free load balancer
+```
+    shape = "10Mbps-Micro"
+```
+but can be changed if needed
+
+## Linux Images
+
+This template uses the Oracle Linux 7.9 image in frankfurt as of May 2021
+
+```
+    source_details {
+        # Oracle Linux 7.9
+        source_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaajkxjdpgfzjl7tg3a7vzdvwnww6w5k47r5acwe4fqecowqwuoria"
+        source_type = "image"
+    }
+```
+You can use the OCI CLI/API commands to list the available images in your region.
+Refer to the following link for the OCI CLI commands:
+
+[OCI CLI Command for listing Linux Images](https://docs.oracle.com/en-us/iaas/tools/oci-cli/latest/oci_cli_docs/cmdref/compute/image/list.html)
+
+For example:
+```
+cloudshell:~ (eu-frankfurt-1)$ oci compute image list --compartment-id ocid1.tenancy.oc1..aabbccddeeffgghhiitahy6ug7dy232490juedlkashjda9s8y32klrjbsdfvlokih --operating-system "Oracle Linux"
+{
+  "data": [
+    {
+      "agent-features": null,
+      "base-image-id": null,
+      "billable-size-in-gbs": 0,
+      "compartment-id": null,
+      "create-image-allowed": true,
+      "defined-tags": {},
+      "display-name": "Oracle-Linux-8.3-aarch64-2021.05.12-0",
+      "freeform-tags": {},
+      "id": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaafw77tp7hx2x2u3ogz427hqkgh3vln3znwlkzau3p7edrlb7x6tda",
+      "launch-mode": "NATIVE",
+      "launch-options": {
+        "boot-volume-type": "PARAVIRTUALIZED",
+        "firmware": "UEFI_64",
+        "is-consistent-volume-naming-enabled": true,
+        "is-pv-encryption-in-transit-enabled": true,
+        "network-type": "PARAVIRTUALIZED",
+        "remote-data-volume-type": "PARAVIRTUALIZED"
+      },
+      "lifecycle-state": "AVAILABLE",
+      "listing-type": null,
+      "operating-system": "Oracle Linux",
+      "operating-system-version": "8",
+      "size-in-mbs": 47694,
+      "time-created": "2021-05-19T03:41:33.147000+00:00"
+    },
+    {
+      "agent-features": null,
+      "base-image-id": null,
+      "billable-size-in-gbs": 0,
+      "compartment-id": null,
+      "create-image-allowed": true,
+      "defined-tags": {},
+      "display-name": "Oracle-Linux-8.3-Gen2-GPU-2021.05.12-0",
+      "freeform-tags": {},
+      "id": "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaad7zlitmahc5w5m7hv47jiwooiy7vqethdsl4vexdc3sfcrzkvi3q",
+      "launch-mode": "NATIVE",
+      "launch-options": {
+        "boot-volume-type": "PARAVIRTUALIZED",
+        "firmware": "UEFI_64",
+        "is-consistent-volume-naming-enabled": true,
+        "is-pv-encryption-in-transit-enabled": true,
+        "network-type": "PARAVIRTUALIZED",
+        "remote-data-volume-type": "PARAVIRTUALIZED"
+      },
+      "lifecycle-state": "AVAILABLE",
+      "listing-type": null,
+      "operating-system": "Oracle Linux",
+      "operating-system-version": "8",
+      "size-in-mbs": 47694,
+      "time-created": "2021-05-20T17:15:04.763000+00:00"
+    }.....
+```
 
 ## IP Addresses and Domain Name Providers
 
@@ -52,6 +148,95 @@ For example, if I was using the OCI cloud shell and had my keys there, my path w
 ssh_authorized_keys = file("/home/bspendol/terraform/compute.pub")
 
 private_key = file("/home/bspendol/terraform/compute.ppk")
+
+If you have an OCI Vault, you can use that for the keys.
+
+```
+data "oci_kms_decrypted_data" "private_key_decrypted" {
+    #Required
+    ciphertext = "${file(var.encrypted_private_key_path)}"
+    crypto_endpoint = "${var.decrypted_data_crypto_endpoint}"
+    key_id = "${var.kms_encryption_key_id}"
+}
+  
+  
+resource "oci_core_instance" "TFInstance1" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.availability_domain - 1],"name")}"
+  compartment_id      = "${var.compartment_ocid}"
+  display_name        = "TFInstance"
+  hostname_label      = "instance3"
+  shape               = "${var.instance_shape}"
+  subnet_id           = "${oci_core_subnet.ExampleSubnet.id}"
+  
+  source_details {
+    source_type = "image"
+    source_id   = "${var.instance_image_ocid[var.region]}"
+  }
+  
+  extended_metadata {
+    ssh_authorized_keys = "${var.ssh_public_key}"
+  }
+}
+  
+resource "null_resource" "remote-exec" {
+      connection {
+      agent       = false
+      timeout     = "30m"
+      host        = "${oci_core_instance.TFInstance1.public_ip}"
+      user        = "${var.opc_user_name}"
+      private_key = "${data.oci_kms_decrypted_data.private_key_decrypted.plaintext}"
+    }
+  
+    inline = [
+      "touch ~/IMadeAFile.Right.Here"
+    ]
+  
+  }
+```
+
+Lastly, you can have the script create a public/private key pair and get the output post creation. Know that anyone who has access to the logs can see the key text.
+
+```
+resource "tls_private_key" "public_private_key_pair" {
+  algorithm   = "RSA"
+}
+  
+resource "oci_core_instance" "TFInstance1" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.availability_domain - 1],"name")}"
+  compartment_id      = "${var.compartment_ocid}"
+  display_name        = "TFInstance"
+  hostname_label      = "instance3"
+  shape               = "${var.instance_shape}"
+  subnet_id           = "${oci_core_subnet.ExampleSubnet.id}"
+  
+  source_details {
+    source_type = "image"
+    source_id   = "${var.instance_image_ocid[var.region]}"
+  }
+  
+  extended_metadata {
+    ssh_authorized_keys = "${tls_private_key.public_private_key_pair.public_key_openssh}"
+  }
+}
+  
+resource "null_resource" "remote-exec" {
+  depends_on = ["oci_core_instance.TFInstance1"]
+  
+  provisioner "remote-exec" {
+    connection {
+      agent       = false
+      timeout     = "30m"
+      host        = "${oci_core_instance.TFInstance1.public_ip}"
+      user        = "${var.opc_user_name}"
+      private_key = "${tls_private_key.public_private_key_pair.private_key_pem}"
+    }
+  
+    inline = [
+      "touch ~/IMadeAFile.Right.Here"
+    ]
+  }
+}
+```
 
 ## Setting up the PAR URLs for the static files
 

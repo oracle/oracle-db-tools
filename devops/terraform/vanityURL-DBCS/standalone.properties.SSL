@@ -1,0 +1,10 @@
+#Wed Dec 16 07:06:43 UTC 2020
+#jetty.port=8080
+jetty.secure.port=443
+ssl.cert=/opt/oracle/ords/conf/ords/standalone/domain.crt
+ssl.cert.key=/opt/oracle/ords/conf/ords/standalone/domain.pkcs8.der
+standalone.context.path=/ords
+standalone.doc.root=/opt/oracle/ords/conf/ords/standalone/doc_root
+standalone.scheme.do.not.prompt=true
+standalone.static.context.path=/i/20.2.0.00.20/
+standalone.static.path=/opt/oracle/ords/apex/images

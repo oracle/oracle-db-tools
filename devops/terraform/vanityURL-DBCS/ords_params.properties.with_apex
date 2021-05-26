@@ -1,0 +1,36 @@
+#
+# DB Connect Info
+db.connectionType=basic
+db.hostname=
+db.port=
+db.servicename=
+sys.user=SYS
+sys.password=
+
+# for APEX
+plsql.gateway.add=true
+db.username=APEX_PUBLIC_USER
+db.password=
+rest.services.apex.add=true
+user.apex.listener.password=
+user.apex.restpublic.password=
+migrate.apex.rest=false
+
+# for ORDS
+rest.services.ords.add=true
+user.public.password=
+schema.tablespace.default=SYSAUX
+schema.tablespace.temp=TEMP
+user.tablespace.default=SYSAUX
+user.tablespace.temp=TEMP
+
+# for standalone nmode
+standalone.mode=true
+standalone.http.port=8080
+standalone.use.https=false
+standalone.static.images=/opt/oracle/ords/apex/images
+
+# for SDW/Database Actions
+feature.sdw=true
+restEnabledSql.active=true
+database.api.enabled=true

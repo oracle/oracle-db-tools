@@ -242,14 +242,23 @@ resource "oci_core_instance" "ords_compute_instance" {
     # Required
     availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
     compartment_id = oci_identity_compartment.tf-compartment.id
-    #shape = "VM.Standard.E2.1.Micro"
-    shape = "VM.Standard.E3.Flex"
-	  shape_config {
-		  memory_in_gbs = "20"
-		  ocpus = "1"
-    }
+    is_pv_encryption_in_transit_enabled = "true"
+
+# Shape Section
+#
+    shape = var.vm_shape
+#
+# Remember to add the following section if using one of the shapes that need it. Refer to the readme
+#
+#	  shape_config {
+#		  memory_in_gbs = "20"
+#		  ocpus = "1"
+#    }
+#
+#    
     source_details {
-        source_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaf6gm7xvn7rhll36kwlotl4chm25ykgsje7zt2b4w6gae4yqfdfwa"
+        # Oracle Linux 7.9
+        source_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaprt6uk32tylin3owcddyllao3uthmo7vheqepeybvjj6to7xkdgq"
         source_type = "image"
     }
 
@@ -268,23 +277,23 @@ resource "oci_core_instance" "ords_compute_instance" {
 
 # Create a volume
 
-resource "oci_core_volume" "ords_volume" {
+# resource "oci_core_volume" "ords_volume" {
 
-    availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
-    compartment_id = oci_identity_compartment.tf-compartment.id
-    display_name = "ords_volume"
-    size_in_gbs = "50"
-}
+#     availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
+#     compartment_id = oci_identity_compartment.tf-compartment.id
+#     display_name = "ords_volume"
+#     size_in_gbs = "50"
+# }
 
-# Attach the volume
+# # Attach the volume
 
-resource "oci_core_volume_attachment" "attach_volume" {
+# resource "oci_core_volume_attachment" "attach_volume" {
 
-    instance_id = oci_core_instance.ords_compute_instance.id
-    volume_id = oci_core_volume.ords_volume.id
-    attachment_type = "paravirtualized"
+#     instance_id = oci_core_instance.ords_compute_instance.id
+#     volume_id = oci_core_volume.ords_volume.id
+#     attachment_type = "paravirtualized"
 
-}
+# }
 
 # Load Balancer
 
@@ -292,6 +301,7 @@ resource "oci_load_balancer_load_balancer" "vanity_load_balancer" {
 
     compartment_id = oci_identity_compartment.tf-compartment.id
     display_name = "LB1"
+    # LB Shape can be changed here
     shape = "10Mbps-Micro"
     subnet_ids = [oci_core_subnet.vcn-public-subnet.id]
 
