@@ -15,9 +15,9 @@ This directory contains samples of code for Jenkins and Spinnaker for DB/APEX CI
 
 #### Terraform
 Here we have sample code for using terraform in OCI for the following tasks:
- 1. Vanity URL with ADB: Create a user managed ORDS instance on a compute VM for an autonomous DB and custom domain name using Let's Encrypt
- 2. Vanity URL with DBCS: Create a user managed ORDS instance on a compute VM for a DBCS instance (VM, BM or ExaCS) and custom domain name using Let's Encrypt
- 3. Simple ORDS setup: Create a VM with ORDS attached to a DBCS instance
+ 1. **Vanity URL with ADB**: Create a user managed ORDS instance on a compute VM for an autonomous DB and custom domain name using Let's Encrypt
+ 2. **Vanity URL with DBCS**: Create a user managed ORDS instance on a compute VM for a DBCS instance (VM, BM or ExaCS) and custom domain name using Let's Encrypt
+ 3. **Simple ORDS setup**: Create a VM with ORDS attached to a DBCS instance
 
 
 
