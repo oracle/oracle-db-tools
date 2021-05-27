@@ -63,17 +63,17 @@ ingress_security_rules {
       }
     }
 
-ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 8080        
-          max = 8080
-      }
-    }    
+# ingress_security_rules { 
+#       stateless = false
+#       source = "0.0.0.0/0"
+#       source_type = "CIDR_BLOCK"
+#       # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
+#       protocol = "6"
+#       tcp_options { 
+#           min = 8080        
+#           max = 8080
+#       }
+#     }    
 
 ingress_security_rules { 
       stateless = false
@@ -87,17 +87,17 @@ ingress_security_rules {
       }
     }
 
-ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 443        
-          max = 443
-      }
-    }     
+# ingress_security_rules { 
+#       stateless = false
+#       source = "0.0.0.0/0"
+#       source_type = "CIDR_BLOCK"
+#       # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
+#       protocol = "6"
+#       tcp_options { 
+#           min = 443        
+#           max = 443
+#       }
+#     }     
   ingress_security_rules { 
       stateless = false
       source = "0.0.0.0/0"
@@ -199,8 +199,8 @@ resource "null_resource" "remote-exec" {
     
         inline = [
         "sudo yum install ords -y",
-        "sudo firewall-cmd --permanent --zone=public --add-port=8080/tcp",
-        "sudo firewall-cmd --permanent --zone=public --add-port=443/tcp",        
+        "sudo firewall-cmd --permanent --zone=public --add-port=8443/tcp",
+        # "sudo firewall-cmd --permanent --zone=public --add-port=443/tcp",        
         "sudo firewall-cmd --reload",
         ]
     
@@ -247,15 +247,15 @@ resource "null_resource" "file" {
         "sudo su - oracle -c 'sleep 20s'",
         "sudo rm /tmp/ords_params.properties",
 
-        # we need to make sure ORDS is stopped.....no matter what.....
-        "sudo su - oracle -c 'systemctl stop ords'",        
-        "sudo systemctl stop ords",
-        "sudo su - oracle -c 'ps -ef | grep java | grep -v grep | awk \"{print $2}\" | xargs kill'",     
+        # # we need to make sure ORDS is stopped.....no matter what.....
+        # "sudo su - oracle -c 'systemctl stop ords'",        
+        # "sudo systemctl stop ords",
+        # "sudo su - oracle -c 'ps -ef | grep java | grep -v grep | awk \"{print $2}\" | xargs kill'",     
 
-        #prep for starting as root on 443
-        "sudo su - oracle -c 'sed -i 's/8443/443/g' /opt/oracle/ords/conf/ords/standalone/standalone.properties'",
-        "sudo sed -i \"s,ords_owner='oracle',ords_owner='root',g\" /etc/init.d/ords",
-        "sudo systemctl start ords",         
+        # #prep for starting as root on 443
+        # "sudo su - oracle -c 'sed -i 's/8443/443/g' /opt/oracle/ords/conf/ords/standalone/standalone.properties'",
+        # "sudo sed -i \"s,ords_owner='oracle',ords_owner='root',g\" /etc/init.d/ords",
+        # "sudo systemctl start ords",         
         ]
     
     }

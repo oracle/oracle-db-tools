@@ -36,10 +36,10 @@ variable "vm_shape" {
 
 ## These Variables are not used at this time
 
-variable "ssh_public_key" {
-  default = "xxxxxx"  
-}
+# variable "ssh_public_key" {
+#   default = "xxxxxx"  
+# }
 
-variable "ssh_private_key" {
-  default = "xxxxxx"
-}
+# variable "ssh_private_key" {
+#   default = "xxxxxx"
+# }
