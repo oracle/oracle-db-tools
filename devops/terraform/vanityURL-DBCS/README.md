@@ -14,7 +14,7 @@
 This project is a terraform script to help deploy ORDS and register a Vanity URL on a VM/ExaCS DB instance in OCI.
 
 It creates the following:
-- VCN (or use existing one) and Public Subnet
+- A Public Subnet using an existing VCN
 - Security Lists for access over 443 and 8080
 - A Load Balancer
 - A compute instance (full or micro)
