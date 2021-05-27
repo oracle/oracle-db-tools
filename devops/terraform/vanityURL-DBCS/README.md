@@ -22,6 +22,8 @@ It creates the following:
 - Uses LetsEncrypt to get the certs for your customer domain
 - Starts up ORDS on 443 with the certs installed
 
+At this time, we cannot install APEX into this instance with this terraform script.
+
 
 **Once the Load Balancer is up and running, you will need to take the public IP and change the DNS records to point to your custom domain**
 
@@ -238,11 +240,19 @@ resource "null_resource" "remote-exec" {
 }
 ```
 
-## Setting up the PAR URLs for the static files
+## Compartments
 
-In the terraform scripts, you will see entries for
-APEX_PAR_URL
-ORDS_CONF_PAR_URL
+In the terraform script you will see the section:
 
-The first one needs to be replaced with an OCI Object Store PAR for where you have staged the apex install zip
-The second one needs to be replaced with an OCI Object Store PAR for where you have staged the ords_conf.zip file that is contained in this project.
+```
+# Create a compartment
+
+resource "oci_identity_compartment" "tf-compartment" {
+    # Required
+    compartment_id = var.tenancy_ocid
+    description = "Compartment for Terraform resources."
+    name = "ORDS_Compartment"
+}
+```
+
+You will want to change the name of the compartment to be of a compartment that has access to the Database or the same compartment of the database.
