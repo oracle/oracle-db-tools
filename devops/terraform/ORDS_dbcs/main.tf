@@ -243,8 +243,8 @@ resource "null_resource" "file" {
 
         # Uninstall then install
         "sudo su - oracle -c 'java -jar /opt/oracle/ords/ords.war uninstall --parameterFile /tmp/ords_params.properties --silent'",
-        "sudo su - oracle -c 'java -jar /opt/oracle/ords/ords.war install --parameterFile /tmp/ords_params.properties --silent &'",        
-        "sudo su - oracle -c 'sleep 20s'",
+        "sudo su - oracle -c 'java -jar /opt/oracle/ords/ords.war install --parameterFile /tmp/ords_params.properties --silent &'",       
+        "sudo su - oracle -c 'sleep 60s'",
         "sudo rm /tmp/ords_params.properties",
 
         # # we need to make sure ORDS is stopped.....no matter what.....
