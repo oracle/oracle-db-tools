@@ -1,1 +1,1 @@
-# ALl things CICD
+# All things CICD
