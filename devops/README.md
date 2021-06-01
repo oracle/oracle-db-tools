@@ -10,6 +10,10 @@ https://www.youtube.com/watch?v=P3La7ig37CU
 
 ### Contents:
 
+#### CICD
+
+Template/Directory structure for database/APEX CICD
+
 #### Pipelines
 This directory contains samples of code for Jenkins and Spinnaker for DB/APEX CICD
 
