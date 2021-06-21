@@ -291,18 +291,18 @@ depends_on = [
 }
 
 resource "oci_load_balancer_backend" "vanity_backend" {
-
+    count = var.number_of_midtiers
     backendset_name = oci_load_balancer_backend_set.vanity_backend_set.name
-    ip_address = oci_core_instance.ords_compute_instance.private_ip
+    ip_address = oci_core_instance.ords_compute_instance[count.index].private_ip
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
     port = "8080"
 
 }
 
 resource "oci_load_balancer_backend" "vanity_backend_ssl" {
-
+    count = var.number_of_midtiers
     backendset_name = oci_load_balancer_backend_set.vanity_backend_set_ssl.name
-    ip_address = oci_core_instance.ords_compute_instance.private_ip
+    ip_address = oci_core_instance.ords_compute_instance[count.index].private_ip
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
     port = "443"
 
@@ -369,11 +369,13 @@ resource "oci_load_balancer_listener" "vanity_listener_ssl" {
 
 resource "null_resource" "remote-exec" {
 
+        count = var.number_of_midtiers
+
         provisioner "remote-exec" {
         connection {
         agent       = false
         timeout     = "10m"
-        host        = oci_core_instance.ords_compute_instance.public_ip
+        host        = oci_core_instance.ords_compute_instance[count.index].public_ip
         user        = "opc"
         private_key = file("/path/to/your/private/keys")
         }
@@ -398,10 +400,12 @@ depends_on = [
 
 resource "null_resource" "file" {
 
+    count = var.number_of_midtiers
+
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }
@@ -421,7 +425,7 @@ resource "null_resource" "file" {
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }
@@ -463,10 +467,12 @@ depends_on = [
 
 resource "null_resource" "cert" {
 
+    count = var.number_of_midtiers
+
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }
@@ -476,7 +482,7 @@ resource "null_resource" "cert" {
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }

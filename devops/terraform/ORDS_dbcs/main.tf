@@ -188,11 +188,13 @@ resource "oci_core_instance" "ords_compute_instance" {
 
 resource "null_resource" "remote-exec" {
 
+        count = var.number_of_midtiers
+
         provisioner "remote-exec" {
         connection {
         agent       = false
         timeout     = "10m"
-        host        = oci_core_instance.ords_compute_instance.public_ip
+        host        = oci_core_instance.ords_compute_instance[count.index].public_ip
         user        = "opc"
         private_key = file("/path/to/your/private/keys")
         }
@@ -215,10 +217,12 @@ depends_on = [
 
 resource "null_resource" "file" {
 
+    count = var.number_of_midtiers
+
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }
@@ -232,7 +236,7 @@ resource "null_resource" "file" {
     connection {
             agent       = false
             timeout     = "10m"
-            host        = oci_core_instance.ords_compute_instance.public_ip
+            host        = oci_core_instance.ords_compute_instance[count.index].public_ip
             user        = "opc"
             private_key = file("/path/to/your/private/keys")
             }
