@@ -242,6 +242,7 @@ resource "oci_core_instance" "ords_compute_instance" {
     # Required
     availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
     compartment_id = oci_identity_compartment.tf-compartment.id
+    count = var.number_of_midtiers
     #shape = "VM.Standard.E2.1.Micro"
     shape = "VM.Standard.E3.Flex"
 	  shape_config {
@@ -254,7 +255,7 @@ resource "oci_core_instance" "ords_compute_instance" {
     }
 
     # Optional
-    display_name = "ORDS1"
+    display_name = "ORDS${count.index}"
     create_vnic_details {
         assign_public_ip = true
         subnet_id = oci_core_subnet.vcn-public-subnet.id

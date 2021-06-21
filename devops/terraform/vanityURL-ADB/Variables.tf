@@ -31,6 +31,10 @@ variable "domain_name" {
   default = "xxxxxx"
 }
 
+variable "number_of_midtiers" {
+  # how many midtiers you want to create
+  default = 1
+}
 
 ## These Variables are not used at this time
 

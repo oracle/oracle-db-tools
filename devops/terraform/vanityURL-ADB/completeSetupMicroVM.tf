@@ -242,6 +242,7 @@ resource "oci_core_instance" "ords_compute_instance" {
     # Required
     availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
     compartment_id = oci_identity_compartment.tf-compartment.id
+    count = var.number_of_midtiers
     shape = "VM.Standard.E2.1.Micro"
     source_details {
         source_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaf6gm7xvn7rhll36kwlotl4chm25ykgsje7zt2b4w6gae4yqfdfwa"
@@ -249,7 +250,7 @@ resource "oci_core_instance" "ords_compute_instance" {
     }
 
     # Optional
-    display_name = "ORDS1"
+    display_name = "ORDS${count.index}"
     create_vnic_details {
         assign_public_ip = true
         subnet_id = oci_core_subnet.vcn-public-subnet.id
