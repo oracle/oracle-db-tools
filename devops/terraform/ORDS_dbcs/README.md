@@ -46,6 +46,16 @@ At this time, we cannot install APEX into this instance with this terraform scri
 	}
 ```
 
+**Number of Midtiers**
+
+Change the number of mid-tiers with this variable
+```
+variable "number_of_midtiers" {
+  # how many midtiers you want to create
+  default = 1
+}
+```
+
 ## Linux Images
 
 This template uses the Oracle Linux 7.9 image in frankfurt as of May 2021
