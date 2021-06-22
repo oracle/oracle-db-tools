@@ -1,5 +1,6 @@
 # Using Bastion as a Service for ADB/DBCS instances
 
+## Setup
 First we need some information from the ADB using the private endpoint. On the details page of the ADB using PE, find the Network section.
 
 
