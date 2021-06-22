@@ -16,7 +16,7 @@ Use the following OCI CLI command to create a dynamic group. The **instanceid** 
 oci iam dynamic-group create --description ORDS_DynamicGroup --matching-rule "Any {instance.id = '<INSTANCE.ID>'}" --name ORDS_DynamicGroup
 ```
 
-with the result being similar to the following:
+with the results being similar to the following:
 
 ```
 {
@@ -42,7 +42,7 @@ Remember to take note of the **"id"** attribite's value
 "id": "ocid1.dynamicgroup.oc1..aaaaaaaafddf...",
 ```
 
-## Create Log Group
+## Create a Log Group
 
 Use the following OCI CLI command to create a Log group. The **--compartment-id** should be the OCID of a compartment you want to use for all the logs. Replace **<COMPARTMENT.ID>** with the Compartment OCID you would like to use.
 
@@ -58,7 +58,7 @@ Run the following command to get a list of the log groups you have created so we
 oci logging log-group list --compartment-id <COMPARTMENT.ID>
 ```
 
-with the results being:
+with the results being similar to the following:
 
 ```
 {
@@ -98,27 +98,34 @@ Remember to take note of the **"id"** attribite's value for the **ORDS_LogGroup*
 
 ## Create a Log
 
-oci logging log create --display-name ORDS_Logs --log-group-id ocid1.loggroup.oc1.eu-frankfurt-1.amaaaaaau3i6vkyayig4yxj7unl24emtk4ldjsdmjy23wrg3bhtpqvbdaala --log-type CUSTOM
+Use the following OCI CLI command to create a Log using the OCID of the Log Group you previously created. Replace **<LOG_GROUP.ID>** with the Log Group OCID you created in the **Create a Log Group** step and found the OCID in the **List Log Groups** step.
+```
+oci logging log create --display-name ORDS_Logs --log-group-id <LOG_GROUP.ID> --log-type CUSTOM
+```
 
-Display Name: The name can contain only letters, numbers, dashes, underscores, and periods. The maximum length is 255 characters.
+## List the Logs
 
+Use the following OCI CLI command to list all the logs that belong to a log group. It uses the Log Group OCID as a parameter. Replace **<LOG_GROUP.ID>** with the Log Group OCID you created in the **Create a Log Group** step and found the OCID in the **List Log Groups** step.
 
-List Logs
+```
+oci logging log list --log-group-id <LOG_GROUP.ID>
+```
 
-oci logging log list --log-group-id ocid1.loggroup.oc1.eu-frankfurt-1.amaaaaaau3i6vkyayig4yxj7unl24emtk4ldjsdmjy23wrg3bhtpqvbdaala
+with the results being similar to the following:
 
+```
 {
    "data": [
      {
-      "compartment-id": "ocid1.compartment.oc1..aaaaaaaasoku6xtelb2cghtj4htqika77vwnzir422c5yhdd732hndvezx4a",
+      "compartment-id": "ocid1.compartment.oc1..aaaaaaaasoku6xtelb2...",
       "configuration": null,
       "defined-tags": {},
       "display-name": "ORDS_Logs",
       "freeform-tags": {},
-      "id": "ocid1.log.oc1.eu-frankfurt-1.amaaaaaau3i6vkyaduc25aatg32sxpixldpmnu34xvvexnp2sbyvfic6ubja",
+      "id": "ocid1.log.oc1.eu-frankfurt-1.amaaaaaau3i6vkyaduc...",
       "is-enabled": true,
       "lifecycle-state": "ACTIVE",
-      "log-group-id": "ocid1.loggroup.oc1.eu-frankfurt-1.amaaaaaau3i6vkyayig4yxj7unl24emtk4ldjsdmjy23wrg3bhtpqvbdaala",
+      "log-group-id": "ocid1.loggroup.oc1.eu-frankfurt-1.amaaaaaau3i6vkyayig4yxj7unl...",
       "log-type": "CUSTOM",
       "retention-duration": 30,
       "time-created": "2021-06-17T16:42:46.599000+00:00",
@@ -126,30 +133,53 @@ oci logging log list --log-group-id ocid1.loggroup.oc1.eu-frankfurt-1.amaaaaaau3
      }
    ]
 }
+```
 
+Remember to take note of the **"id"** attribite's value for the **ORDS_Logs** Log Group.
 
-List Dynamic Groups
+```
+"display-name": "ORDS_Logs",
+"freeform-tags": {},
+"id": "ocid1.log.oc1.eu-frankfurt-1.amaaaaaau3i6vkyaduc...",
+```
 
+## List the Dynamic Groups
+
+Use the following OCI CLI command to list all the Dynamic Groups. We will be adding the **--name** parameter so that we only get back the dynamic group we created called ORDS_DynamicGroup.
+
+```
 oci iam dynamic-group list --name ORDS_DynamicGroup
+```
+with the results being similar to the following:
 
+```
 {
    "data": [
      {
-      "compartment-id": "ocid1.tenancy.oc1..aaaaaaaambnyexdtahy6ug7dy2ngnfnthvvbpfgmgmg3slb73f52wkbudvwq",
+      "compartment-id": "ocid1.tenancy.oc1..aaaaaaaambnyexdta...",
       "defined-tags": {},
       "description": "ORDS_DynamicGroup",
       "freeform-tags": {},
-      "id": "ocid1.dynamicgroup.oc1..aaaaaaaajbgg7wq7aawnnkmrocvoirfvjauhismq6xju5kv5kfttyehie3aa",
+      "id": "ocid1.dynamicgroup.oc1..aaaaaaaajbgg7wq7aawnnkmrocvo...",
       "inactive-status": null,
       "lifecycle-state": "ACTIVE",
-      "matching-rule": "Any {instance.id = 'ocid1.instance.oc1.eu-frankfurt-1.antheljsu3i6vkycxf42vz2akfqisun2kpb3jnm57cihbg4pknlr3egrh6ha'}",
+      "matching-rule": "Any {instance.id = 'ocid1.instance.oc1.eu-frankfurt-1.antheljsu3i6vkyc...'}",
       "name": "ORDS_DynamicGroup",
       "time-created": "2021-06-17T18:03:45.166000+00:00"
      }
    ]
 }
+```
 
-Create Agent Config
+Remember to take note of the **"id"** attribite's value.
+
+```
+"description": "ORDS_DynamicGroup",
+"freeform-tags": {},
+"id": "ocid1.dynamicgroup.oc1..aaaaaaaajbgg7wq7aawnnkmrocvo...",
+```
+
+## Create an Agent Config to Harvest Logs on the Compute Instance
 
 oci logging agent-configuration create --compartment-id ocid1.compartment.oc1..aaaaaaaasoku6xtelb2cghtj4htqika77vwnzir422c5yhdd732hndvezx4a --is-enabled TRUE
  --display-name ORDS_Logging_Agent --service-configuration file://serv.json --group-association file://group.json --description ORDS_Logging_Agent
