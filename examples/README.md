@@ -3,7 +3,7 @@
 ## Current Examples and Walk-throughs
 
 - [Using the Logging Service in OCI with ORDS](./oci/ords-oci-logging.md)
-- [Using the Bastion as a Service to access OCI Cloud Databases using Private IPs](./oci/bastion-dbcs.md)
+- [Using the Bastion as a Service to access OCI Cloud Databases/ORDS/Database Actions using Private IPs](./oci/bastion-dbcs.md)
 
 
 ## Current Livelabs
