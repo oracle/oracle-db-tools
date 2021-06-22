@@ -1,0 +1,26 @@
+  {
+    "configurationType": "LOGGING",
+    "destination": {
+      "logObjectId": "<LOG.ID>"
+    },
+    "sources": [
+        {
+            "name": "ordslog2",
+            "parser": {
+              "field-time-key": null,
+              "is-estimate-current-event": null,
+              "is-keep-time-key": null,
+              "is-null-empty-string": null,
+              "message-key": null,
+              "null-value-pattern": null,
+              "parser-type": "NONE",
+              "timeout-in-milliseconds": null,
+              "types": null
+            },
+            "paths": [
+              "/home/opc/ords/conf/ords/standalone/logs/*.log"
+            ],
+            "source-type": "LOG_TAIL"
+          }
+    ]
+  }

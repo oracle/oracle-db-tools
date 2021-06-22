@@ -1,13 +1,68 @@
 
 # ORDS Logging in OCI
 
+## Preparing ORDS for Logging
+
+To have ORDS start logging in standalone mode, we need to change a few parameters and create a file to instruct ORDS to log not only java logging, but access logs.
+
+## Update the standalone.properties file
+
+In the directory where the ORDS configuration files are (typically ords/conf/ords/ or if installing from yum, /opt/oracle/ords/conf/ords/), find the standalone directory.
+
+In this directory is the standalone.properties file. Add the following lines but be sure to replace **<LOG_DIRECTORY>** with an actual directory on your VM instance. This walkthrough uses **/home/opc/ords/conf/ords/standalone/logs/** as the logging directory.
+
+```
+standalone.access.log=<LOG_DIRECTORY>
+standalone.access.format=%{client}a %u %t "%r" %s %{CLF}O "%{Referer}i" "%{User-Agent}i" %{Host}i
+```
+using /home/opc/ords/conf/ords/standalone/logs/, the standalone.properties file would look like the following:
+
+```
+standalone.access.log=/home/opc/ords/conf/ords/standalone/logs/
+standalone.access.format=%{client}a %u %t "%r" %s %{CLF}O "%{Referer}i" "%{User-Agent}i" %{Host}i
+```
+
+## Create the mylogfile.properties file
+
+Where the ords.war file is located, create a file called mylogfile.properties. Add the following to that file, again replacing **<LOG_DIRECTORY>** with the directory you want to use and used in the previous set up step:
+
+```
+handlers=java.util.logging.FileHandler
+# Default global logging level for ORDS
+.level=INFO
+java.util.logging.FileHandler.pattern=<LOG_DIRECTORY>/ords-sys.log
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+java.util.logging.SimpleFormatter.format = %1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n
+```
+using /home/opc/ords/conf/ords/standalone/logs/, the standalone.properties file would look like the following:
+
+```
+handlers=java.util.logging.FileHandler
+# Default global logging level for ORDS
+.level=INFO
+java.util.logging.FileHandler.pattern=/home/opc/ords/conf/ords/standalone/logs/ords-sys.log
+java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
+java.util.logging.SimpleFormatter.format = %1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n
+```
+
+Now, when starting up ords in standalone mode, you will add the following:
+```
+-Djava.util.logging.config.file=mylogfile.properties
+```
+with the full command looking like the following
+```
+java -Djava.util.logging.config.file=mylogfile.properties ords.war standalone &
+```
+
 ## OCI Setups Using OCI CLI
 
 **Note: When running these commands, you will need to save off OCID of the following resources:**
 
-    Dynamic Group OCID
-    Log Group OCID
-    Log OCID
+    VM Instance OCID:_______________________
+    Compartment OCID:_______________________
+    Dynamic Group OCID:_______________________
+    Log Group OCID:_______________________
+    Log OCID:_______________________
 
 ## Create Dynamic Group
 
@@ -181,59 +236,60 @@ Remember to take note of the **"id"** attribite's value.
 
 ## Create an Agent Config to Harvest Logs on the Compute Instance
 
-oci logging agent-configuration create --compartment-id ocid1.compartment.oc1..aaaaaaaasoku6xtelb2cghtj4htqika77vwnzir422c5yhdd732hndvezx4a --is-enabled TRUE
- --display-name ORDS_Logging_Agent --service-configuration file://serv.json --group-association file://group.json --description ORDS_Logging_Agent
+Use the following OCI CLI command to create an agent to harvest our ORDS log files and place them into the Logging Service. Replace **<COMPARTMENT.ID>** with the Compartment OCID you used previously.
 
+```
+oci logging agent-configuration create --compartment-id <COMPARTMENT.ID> --is-enabled TRUE --display-name ORDS_Logging_Agent --service-configuration file://serv.json --group-association file://group.json --description ORDS_Logging_Agent
+```
 
-Use the files in the sample JSON section for this command. Substitute your values.
-Sample/Test Agent config  log path in OCI
+Before running this command, we need to stage and fill two files; serv,json and group.json
 
-log path: /home/opc/ords/conf/ords/standalone/logs/*.log
+### group.json
 
+In the [group.json](./files/group.json) file, you will replace **<DYNAMIC_GROUP.ID>** with the OCID of your dnynamic group you previously created.
 
-ORDS Setups
-ORDS access logs
+```
+{
+  "groupList": [
+    "<DYNAMIC_GROUP.ID>"
+  ]
+}
+```
 
-standalone.access.log=/tmp
+### serv.json
 
-standalone.access.format=%{client}a %u %t "%r" %s %{CLF}O "%{Referer}i" "%{User-Agent}i" %{Host}i
-Java
+In the [serv.json](./files/serv.json) file, you will replace **<LOG.ID>** with the OCID of your Log you previously created.
 
-TESTING - need to format stack into 1 line if possible
+```
+  {
+    "configurationType": "LOGGING",
+    "destination": {
+      "logObjectId": "<LOG.ID>"
+    },
+    "sources": [
+        {
+            "name": "ordslog2",
+            "parser": {
+              "field-time-key": null,
+              "is-estimate-current-event": null,
+              "is-keep-time-key": null,
+              "is-null-empty-string": null,
+              "message-key": null,
+              "null-value-pattern": null,
+              "parser-type": "NONE",
+              "timeout-in-milliseconds": null,
+              "types": null
+            },
+            "paths": [
+              "/home/opc/ords/conf/ords/standalone/logs/*.log"
+            ],
+            "source-type": "LOG_TAIL"
+          }
+    ]
+  }
+```
 
-handlers=java.util.logging.FileHandler
-# Default global logging level.
-.level=INFO
-#logging level for the foo.bar package
-java.util.logging.FileHandler.pattern=/home/opc/ords/conf/ords/standalone/logs/ords-sys.log
-java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
-java.util.logging.SimpleFormatter.format = %1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %2$s %5$s%6$s%n
-
-
-Sample JSON files
-
-group.json
-
-agent-config.json
-
-
-
-
-Notes
-
-so better answer is this... make a file call it mylogfile.properties content is
-
-handlers=java.util.logging.FileHandler
-# Default global logging level.
-.level=INFO
-#logging level for the foo.bar package
-java.util.logging.FileHandler.pattern=/tmp/ords-%u.log
-
- Then when starting ords specify it like this
-java -Djava.util.logging.config.file=mylogfile.properties
-
-java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter
-
+Shortly after the agent is created, you will begin to see logs from the ORDS VM instance appear in this log. The agent is set to tail the log files in the path: /home/opc/ords/conf/ords/standalone/logs/*.log. Your logging path my differ depending on the ORDS logging set up steps.
 
 
 
