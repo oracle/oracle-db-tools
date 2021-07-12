@@ -1,0 +1,9 @@
+{
+    "name": "sample-oracle-db-node-app",
+    "description": "Sample OracleDB and ORDS NodeJS App",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node server.js"
+      }
+   }
