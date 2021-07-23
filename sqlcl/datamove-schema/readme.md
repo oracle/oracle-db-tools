@@ -2,7 +2,7 @@
 
 A set of scripts to datapump a schema from a local database to an ADW cloud database.
 
-*Only tested with Oracle XE 18 (18.4.0.0.0) (local) and Oracle Database 19c (19.5.0.0.0) (ADW)* 
+*Tested on Oracle 18c and Oracle Autonomous Data Warehouse* 
 
 ## Typical Usage:
 * edit dms-setup.sql to supply required information
