@@ -12,7 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 -- clear defined variables
-prompt Starting dms-teardown
+prompt Starting teardown
 
 -- source
 undefine dm_source;
@@ -33,4 +33,4 @@ undefine dm_credential;
 undefine dm_target;
 undefine dm_schema_imp;
 
-prompt Ending dms-teardown
+prompt Ending teardown

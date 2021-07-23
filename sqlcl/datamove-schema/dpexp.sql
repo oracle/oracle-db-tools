@@ -17,7 +17,7 @@ SET VERIFY OFF
 
 WHENEVER SQLERROR EXIT
 
-prompt dms-dpexp starting ...
+prompt dpexp starting ...
 -- TODO: Maybe move connect & initialize from source stuff to separate script (so this script can use the substitution values and rather than calcing log/file names twice)
 connect &dm_source;
 
@@ -174,4 +174,4 @@ END;
 /
 
 disconnect;
-prompt dms-dpexp exiting
+prompt dpexp exiting

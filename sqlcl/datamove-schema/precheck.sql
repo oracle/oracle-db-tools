@@ -1,4 +1,3 @@
--- dpxfer.sql dm_data_pump_file
 /* 
 The MIT License (MIT)
 
@@ -11,16 +10,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
--- transfer a file to object storage
-SET ECHO OFF
-SET SERVEROUTPUT ON
-SET ESCAPE OFF
-SET VERIFY ON
-prompt dms-dpxfer starting ...
-
-cs oci &dm_oci_profile
-cs &dm_oci_bucket
-cs put &dm_data_pump_path/&dm_data_pump_log /o/&dm_data_pump_log
-cs put &dm_data_pump_path/&dm_data_pump_file /o/&dm_data_pump_file
-
-prompt dms-dpxfer exiting
+prompt Starting precheck
+-- Placeholder for any pre-flight checking we may want to do
+prompt Ending precheck

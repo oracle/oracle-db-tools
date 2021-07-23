@@ -14,7 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 set escape off
 set verify off
 whenever sqlerror exit 
-prompt dms-dpimp starting ...
+prompt dpimp starting ...
 
 set cloudconfig &dm_cloud_config
 connect &dm_target;
@@ -130,4 +130,4 @@ END;
 
 disconnect;
 
-prompt dms-dpimp exiting
+prompt dpimp exiting
