@@ -1,6 +1,8 @@
 # Oracle Database Tools - DevOPs - Terraform - Vanity URLs for ADB without customer managed ORDS
 
-This project is a terraform script to help register a Vanity URL on an ADB instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the ADB OCID and off you go!
+This project is a terraform script to help register a Vanity URL on an ADB instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the ADB OCID and off you go! 
+
+All you need before you start is a VCN with an internet gateway and an ADB-S with a Private Endpoint pre-created. (You can use the VCN Quickstart to create a VCN in just 2 clicks)
 
 It creates the following:
 - A Public Subnet in an existing VCN
@@ -8,6 +10,8 @@ It creates the following:
 - A Load Balancer (always free 10Mbps-Micro)
 
 **The IPs for the Public Subnet assume you have a VNC with a CIDR block of 10.0.0.0/16 and 10.0.11.0/24 is unused.**
+
+When the script is finished, you can associate the public IP of the load balancer with your domain provider.
 
 ## The Variables (in the variables.tf file)
 
