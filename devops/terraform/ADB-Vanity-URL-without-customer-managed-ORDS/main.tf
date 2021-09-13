@@ -15,23 +15,6 @@ data "oci_database_autonomous_database" "autonomous_database" {
     autonomous_database_id = var.adb_ocid
 }
 
-# Create a private subnet
-
-resource "oci_core_subnet" "vcn-private-subnet"{
-
-  # Required
-  compartment_id = var.compartment_ocid
-  vcn_id = var.vcn_ocid
-  cidr_block = "10.0.5.0/24"
- 
-  # Optional
-  # Caution: For the route table id, use module.vcn.nat_route_id.
-  # Do not use module.vcn.nat_gateway_id, because it is the OCID for the gateway and not the route table.
-  #route_table_id = module.vcn.nat_route_id
-  security_list_ids = [oci_core_security_list.private-security-list.id]
-  display_name = "private-subnet"
-}
-
 # Create a public subnet
 
 resource "oci_core_subnet" "vcn-public-subnet"{
@@ -39,70 +22,12 @@ resource "oci_core_subnet" "vcn-public-subnet"{
   # Required
   compartment_id = var.compartment_ocid
   vcn_id = var.vcn_ocid
-  cidr_block = "10.0.6.0/24"
+  cidr_block = "10.0.11.0/24"
  
   # Optional
   #route_table_id = module.vcn.ig_route_id
   security_list_ids = [oci_core_security_list.public-security-list.id]
-  display_name = "public-subnet"
-}
-
-# Create a private security list and some rules
-
-resource "oci_core_security_list" "private-security-list"{
-
-# Required
-  compartment_id = var.compartment_ocid
-  vcn_id = var.vcn_ocid
-
-# Optional
-  display_name = "security-list-for-private-ords-subnet"
-
-#   
-egress_security_rules {
-      stateless = false
-      destination = "0.0.0.0/0"
-      destination_type = "CIDR_BLOCK"
-      protocol = "all" 
-  }
-
-ingress_security_rules { 
-      stateless = false
-      source = "10.0.0.0/16"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 22
-          max = 22
-      }
-    }
-  ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml ICMP is 1  
-      protocol = "1"
-  
-      # For ICMP type and code see: https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
-      icmp_options {
-        type = 3
-        code = 4
-      } 
-    }   
-  
-  ingress_security_rules { 
-      stateless = false
-      source = "10.0.0.0/16"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml ICMP is 1  
-      protocol = "1"
-  
-      # For ICMP type and code see: https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
-      icmp_options {
-        type = 3
-      } 
-    }
+  display_name = "adb-public-subnet"
 }
 
 # Create a public security list and some rules
@@ -114,7 +39,7 @@ resource "oci_core_security_list" "public-security-list"{
   vcn_id = var.vcn_ocid
 
 # Optional
-  display_name = "security-list-for-public-ords-subnet"
+  display_name = "security-list-for-public-adb-subnet"
 
   egress_security_rules {
       stateless = false
@@ -122,39 +47,6 @@ resource "oci_core_security_list" "public-security-list"{
       destination_type = "CIDR_BLOCK"
       protocol = "all" 
   }
-ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 22
-          max = 22
-      }
-    }
-ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 80
-          max = 80
-      }
-    }
-ingress_security_rules { 
-      stateless = false
-      source = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
-      protocol = "6"
-      tcp_options { 
-          min = 8080        
-          max = 8080
-      }
-    }    
 ingress_security_rules { 
       stateless = false
       source = "0.0.0.0/0"
@@ -272,7 +164,7 @@ resource "oci_load_balancer_listener" "vanity_listener_ssl" {
     #Required
     default_backend_set_name = oci_load_balancer_backend_set.vanity_backend_set_ssl.name
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
-    name = "ORDS_BackendListener_ssl"
+    name = "adb_backend_Listener_ssl"
     port = "443"
     protocol = "TCP"
 

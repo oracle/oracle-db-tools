@@ -3,15 +3,11 @@
 This project is a terraform script to help register a Vanity URL on an ADB instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the ADB OCID and off you go!
 
 It creates the following:
-- VCN and Public Subnet
-- Security Lists for access over 443 and 8080
-- A Load Balancer
-- A compute instance (full or micro)
-- Installs ORDS, SQLcl and stages the APEX images
-- Uses LetsEncrypt to get the certs for your customer domain
-- Starts up ORDS connected to an ADB instance on 443 with the certs installed
+- A Public Subnet in an existing VCN
+- Security Lists for access over 443
+- A Load Balancer (always free 10Mbps-Micro)
 
-The Variables.tf file can be used to tell terraform what ADB instance you are going to use and what your custom domain is named.
+**The IPs for the Public Subnet assume you have a VNC with a CIDR block of 10.0.0.0/16 and 10.0.11.0/24 is unused.**
 
 ## The Variables (in the variables.tf file)
 
