@@ -1,0 +1,73 @@
+D:\work\sqlcl-21.2.1.195.1252\bin>sql /nolog
+
+
+SQLcl: Release 21.2 Production on Fri Jul 23 17:06:30 2021
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+SQL> cd datamove-schema
+SQL> @@datamove
+Starting setup
+Exiting setup
+Starting precheck
+Ending precheck
+dpexp starting ...
+Password? (**********?) ******
+Connected.
+Calculating data pump path and file name(s)...
+
+DIRECTORY_PATH
+--------------------------------------------------------------------------------
+D:\app\bjeff\product\18.0.0\admin\xe\dpdump\/5460E3B4980F4EE0B5ECA9390928E66D
+
+
+DPFIL
+------
+HR.DMP
+
+
+DPLOG
+----------
+HR-EXP.LOG
+
+Exporting schema HR ...
+JOB_NAME: EXP_SD_1522
+DataPump Export Status: 'COMPLETED'
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 18c Express Edition Release 18.0.0.0.0 - Production
+Version 18.4.0.0.0
+dpexp exiting
+dpxfer starting ...
+DBMS_CLOUD Credential: Not Set
+OCI Profile: freedb
+Transfer Method: oci
+Cloud Storage URI: Not Set
+DBMS_CLOUD Credential: Not Set
+OCI Profile: freedb
+Transfer Method: oci
+URI as specified: https://objectstorage.us-phoenix-1.oraclecloud.com/n/oraclefreedb/b/transfer
+Put D:\app\bjeff\product\18.0.0\admin\xe\dpdump\/5460E3B4980F4EE0B5ECA9390928E66D/HR-EXP.LOG copied to https://objectstorage.us-phoenix-1.oraclecloud.com/n/oraclefreedb/b/transfer/o/HR-EXP.LOG
+Put D:\app\bjeff\product\18.0.0\admin\xe\dpdump\/5460E3B4980F4EE0B5ECA9390928E66D/HR.DMP copied to https://objectstorage.us-phoenix-1.oraclecloud.com/n/oraclefreedb/b/transfer/o/HR.DMP
+dpxfer exiting
+dpimp starting ...
+Password? (**********?) ************
+Connected.
+Importing schema DM_SCHEMA ...
+credential = SWIFTCRED2
+JOB_NAME: IMP_SD_444
+DataPump Import Status: 'COMPLETED'
+
+
+PL/SQL procedure successfully completed.
+
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.5.0.0.0
+dpimp exiting
+Starting postcheck
+Ending postcheck
+Starting teardown
+Ending teardown
+SQL> 
