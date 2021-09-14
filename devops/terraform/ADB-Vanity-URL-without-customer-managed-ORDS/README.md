@@ -1,6 +1,6 @@
-# Oracle Database Tools - DevOPs - Terraform - Vanity URLs for ADB without customer managed ORDS
+# Oracle Database Tools - DevOPs - Terraform - Vanity URLs for Autonomous Oracle Database without customer managed Oracle REST Data Services
 
-This project is a terraform script to help register a Vanity URL on an ADB instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the ADB OCID and off you go! 
+This project is a terraform script to help register a Vanity URL on an Autonomous Oracle Database instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the Autonomous Oracle Database OCID and off you go! 
 
 All you need before you start is a VCN with an internet gateway and an ADB-S with a Private Endpoint pre-created. (You can use the VCN Quickstart to create a VCN in just 2 clicks)
 
