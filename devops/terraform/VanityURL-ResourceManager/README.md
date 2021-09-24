@@ -1,6 +1,6 @@
 # **Work in progress!**
 
-In the mean time, here is a lizzard dressed up as a shark
+In the mean time, here is a lizard dressed up as a shark
 
 ![lizard-shark](https://user-images.githubusercontent.com/69256666/134745733-73d16d24-6b48-4c59-8a29-044cf65679ef.jpg)
 
