@@ -30,12 +30,6 @@ variable "adb_ocid" {
   default = "xxxxxx"
 }
 
-variable "backend_port" {
-
-    default = 443
-
-}
-
 
 # Cert Variables
 
