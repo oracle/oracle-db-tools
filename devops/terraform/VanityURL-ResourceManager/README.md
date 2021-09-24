@@ -2,7 +2,7 @@
 
 In the mean time, here is a bad pokemon tattoo
 
-
+![bad-tat](https://user-images.githubusercontent.com/69256666/134745500-c0b7b412-e666-4c97-9cf9-be6af39ee38b.jpg)
 
 
 # Oracle Database Tools - DevOPs - Terraform - Resource Manager Vanity URLs for Autonomous Oracle Database without customer managed Oracle REST Data Services
