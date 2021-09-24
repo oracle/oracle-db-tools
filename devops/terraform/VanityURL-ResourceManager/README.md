@@ -1,8 +1,8 @@
 # **Work in progress!**
 
-In the mean time, here is a bad pokemon tattoo
+In the mean time, here is a lizzard dressed up as a shark
 
-![bad-tat](https://user-images.githubusercontent.com/69256666/134745500-c0b7b412-e666-4c97-9cf9-be6af39ee38b.jpg)
+![lizard-shark](https://user-images.githubusercontent.com/69256666/134745733-73d16d24-6b48-4c59-8a29-044cf65679ef.jpg)
 
 
 # Oracle Database Tools - DevOPs - Terraform - Resource Manager Vanity URLs for Autonomous Oracle Database without customer managed Oracle REST Data Services
