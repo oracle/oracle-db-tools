@@ -1,3 +1,10 @@
+# **Work in progress!**
+
+In the mean time, here is a bad pokemon tattoo
+
+
+
+
 # Oracle Database Tools - DevOPs - Terraform - Resource Manager Vanity URLs for Autonomous Oracle Database without customer managed Oracle REST Data Services
 
 This project is a terraform script to help register a Vanity URL on an Autonomous Oracle Database instance in OCI without the need for creating and maintaining an ORDS instance on compute. Just provide your certs, the Autonomous Oracle Database OCID and off you go! 
