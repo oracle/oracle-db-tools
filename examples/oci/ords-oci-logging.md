@@ -51,7 +51,7 @@ Now, when starting up ords in standalone mode, you will add the following:
 ```
 with the full command looking like the following
 ```
-java -Djava.util.logging.config.file=mylogfile.properties ords.war standalone &
+java -Djava.util.logging.config.file=mylogfile.properties -jar ords.war standalone &
 ```
 
 ## OCI Setups Using OCI CLI
