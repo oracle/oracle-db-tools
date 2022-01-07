@@ -3,12 +3,12 @@
 
 variable "region" {
   # sample: eu-frankfurt-1
-  default = ""
+  default = "xxxxxx"
 }
 
 variable "tenancy_ocid" {
   # OCID of your OCI Account Tenancy
-  default = ""
+  default = "xxxxxx"
 }
 
 variable "vcn_ocid" {
@@ -16,46 +16,18 @@ variable "vcn_ocid" {
 # Assumption is that the vcn cidr = "10.0.0.0/16"
 # If using a different CIDR, you will need to make the changes in the terraform file
 #
-  default = ""
-
-}
-
-variable "cidr_block" {
-
-  default = "10.0.11.0/24"
+  default = "xxxxxx"
 
 }
 
 variable "compartment_ocid" {
 # OCID of the compartment the existing VCN is in
-  default = ""
+  default = "xxxxxx"
 }
 
-# LB Vars
-
-variable "lb_shape" {
-
-  default = "10Mbps-Micro"
-
-}
-
-variable "flex_lb_min_shape" {
-
-default = null
-
-}
-
-variable "flex_lb_max_shape" {
-
-  default = null
-
-}
-
-# ADB Vars
-
-variable "autonomous_database" {
+variable "adb_ocid" {
   # OCID of your Autonomous Database you wish to use
-  default = ""
+  default = "xxxxxx"
 }
 
 
@@ -63,24 +35,24 @@ variable "autonomous_database" {
 
 variable "certificate_certificate_name"{
 
-    default = ""
+    default = "xxxxxx"
 
 }
 
 variable "certificate_ca_certificate" {
 
-    default = ""
+    default = "xxxxxx"
 
 }
 
 variable "certificate_private_key" {
 
-    default = ""
+    default = "xxxxxx"
 
 }
     
 variable "certificate_public_certificate" {
 
-    default = ""
+    default = "xxxxxx"
 
 }

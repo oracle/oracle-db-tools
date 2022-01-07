@@ -1,1 +1,161 @@
-stuff
+## Copyright © 2021, Oracle and/or its affiliates. 
+## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
+## Database Development Tools - btspendo
+
+    title: "Use a Vanity URL on an Autonomous Database"
+    stackDescription: "Use a Vanity URL on an Autonomous Database."
+    schemaVersion: 1.0.0
+    version: "20210720"
+    locale: "en"
+
+    variableGroups:
+    - title: General Configuration
+      visible: false
+      variables:
+      - tenancy_ocid
+      - release
+
+    - title: Load Balancer Configuration
+      visible: true
+      variables:
+      - lb_shape
+      - flex_lb_min_shape
+      - flex_lb_max_shape 
+
+    - title: Required Configuration
+      visible: true  
+      variables:
+      - region
+      - vcn_ocid
+      - cidr_block
+      - compartment_ocid
+      - autonomous_database
+      - certificate_certificate_name
+      - certificate_ca_certificate
+      - certificate_public_certificate
+      - certificate_private_key
+
+    variables:
+      
+      compartment_ocid:
+        type: oci:identity:compartment:id
+        required: true
+        visible: true
+        title: Compartment
+        description: "Compartment where you want to create the solution resources"
+
+      region:
+        type: oci:identity:region:name
+        required: true
+        visible: true
+        title: Region
+        description: "Region where you want to deploy the resources defined by this stack."
+
+ 
+      lb_shape:
+        type: enum
+        title: "Load Balancer Shape"
+        description: "Load Balancer Shape"
+        default: "flexible"
+        required: true 
+        enum:
+          - "flexible"
+          - "100Mbps"
+          - "10Mbps"
+          - "10Mbps-Micro"
+          - "400Mbps"
+          - "8000Mbps"
+
+      flex_lb_min_shape:
+        type: enum
+        required: false
+        default: "10"
+        title: "LB Flex Min Shape"
+        description: "Choose Minimum Shape for Flex Load Balancer."
+        enum:
+          - "10"
+          - "100"
+          - "1000"
+          - "400"
+          - "8000"
+        visible:
+          and:
+            - eq:
+              - lb_shape 
+              - "flexible"
+
+      flex_lb_max_shape:
+        type: enum
+        required: false
+        default: "100"
+        title: "LB Flex Max Shape"
+        description: "Choose Maximum Shape for Flex Load Balancer."
+        enum:
+          - "10"
+          - "100"
+          - "1000"
+          - "400"
+          - "8000"
+        visible:
+          and:
+            - eq:
+              - lb_shape 
+              - "flexible"
+
+      vcn_ocid:
+        type: oci:core:vcn:id
+        required: true
+        visible: true
+        title: "Virtual Cloud Network"
+        description: "Virtual Cloud Network"
+        dependsOn:
+          compartmentId: ${compartment_ocid}        
+
+      cidr_block:
+        type: string
+        required: true
+        visible: true
+        title: "CIDR Block for Public Subnet"
+
+      autonomous_database:
+        type: oci:database:autonomousdatabase:id
+        required: true
+        visible: true
+        title: "Autonomous Database"
+        description: "Autonomous Database"
+        dependsOn:
+          compartmentId: ${compartment_ocid}
+
+      certificate_certificate_name:
+        type: string
+        required: true
+        visible: true
+        title: "Certificate Name"
+
+      certificate_ca_certificate:
+        type: string
+        required: true
+        visible: true
+        title: "Certificate Text"
+        
+      certificate_public_certificate:
+        type: string
+        required: true
+        visible: true
+        title: "Public Certificate Text"
+        
+      certificate_private_key:
+        type: string
+        required: true
+        visible: true
+        title: "Certificate Key Text"     
+
+
+
+    outputs:
+
+      loadbalancer_public_url:
+        title: "Loadbalancer Public URL"
+        displayText: "Loadbalancer Public URL"
+        type: string
+        visible: true

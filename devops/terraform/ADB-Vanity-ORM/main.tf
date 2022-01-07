@@ -1,6 +1,13 @@
 #
 # Start
 
+# Local variables
+locals {
+  frontend_port = "443"
+  backend_port = "443"
+}
+
+
 # Get ADs
 
 # <tenancy-ocid> is the compartment OCID for the root compartment.
@@ -12,7 +19,7 @@ data "oci_identity_availability_domains" "ads" {
 
 data "oci_database_autonomous_database" "autonomous_database" {
     #Required
-    autonomous_database_id = var.autonomous_database
+    autonomous_database_id = var.adb_ocid
 }
 
 # Create a public subnet
@@ -22,7 +29,7 @@ resource "oci_core_subnet" "vcn-public-subnet"{
   # Required
   compartment_id = var.compartment_ocid
   vcn_id = var.vcn_ocid
-  cidr_block = var.cidr_block
+  cidr_block = "10.0.11.0/24"
  
   # Optional
   #route_table_id = module.vcn.ig_route_id
@@ -54,8 +61,8 @@ ingress_security_rules {
       # Get protocol numbers from https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml TCP is 6
       protocol = "6"
       tcp_options { 
-          min = 443        
-          max = 443
+          min = local.frontend_port        
+          max = local.frontend_port
       }
     }     
   ingress_security_rules { 
@@ -110,14 +117,9 @@ resource "oci_load_balancer_load_balancer" "vanity_load_balancer" {
 
     compartment_id = var.compartment_ocid
     display_name = "LB1"
-    shape = var.lb_shape
+    shape = "10Mbps-Micro"
     subnet_ids = [oci_core_subnet.vcn-public-subnet.id]
 
-shape_details {
-        #Required
-        maximum_bandwidth_in_mbps = var.flex_lb_max_shape
-        minimum_bandwidth_in_mbps = var.flex_lb_min_shape
-    }
 
 }
 
@@ -146,11 +148,11 @@ resource "oci_load_balancer_backend_set" "vanity_backend_set_ssl" {
 
         #Optional
         interval_ms = "10000"
-        port = "443"
+        port = local.backend_port
         retries = "3"
+        return_code = "302"
         timeout_in_millis = "3000"
         url_path = "/"
-        return_code = "302"
 
     }
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
@@ -172,9 +174,16 @@ resource "oci_load_balancer_listener" "vanity_listener_ssl" {
     default_backend_set_name = oci_load_balancer_backend_set.vanity_backend_set_ssl.name
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
     name = "adb_backend_Listener_ssl"
-    port = "443"
+    port = local.frontend_port
+    # protocol is set to HTTP as HTTPS option is not available
+    # the LB will figure out the protocol should be HTTPS
     protocol = "HTTP"
 
+    #Optional
+    connection_configuration {
+        #Required
+        idle_timeout_in_seconds = 900
+    }
     ssl_configuration {
 
         #Optional
@@ -191,6 +200,6 @@ resource "oci_load_balancer_backend" "adb_backend" {
     backendset_name = oci_load_balancer_backend_set.vanity_backend_set_ssl.name
     ip_address = data.oci_database_autonomous_database.autonomous_database.private_endpoint_ip
     load_balancer_id = oci_load_balancer_load_balancer.vanity_load_balancer.id
-    port = 443
+    port = local.backend_port
 
 }
