@@ -14,7 +14,9 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-FastR is available under the MIT license.
+Copyright (c) 2015, 2023 Oracle and/or its affiliates.
+
+Released under the MIT license.
 
 [1]: http://www.oracle.com/technetwork/developer-tools/sql-developer/overview/index.html
 [2]: http://www.oracle.com/technetwork/developer-tools/datamodeler/overview/index.html
