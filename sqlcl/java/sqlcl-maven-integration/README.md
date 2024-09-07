@@ -1,9 +1,9 @@
 # Overview
 Find out how to include SQLcl libraries in your product and run database and liquibase commands.
-###Java Setup
+### Java Setup
 Java required 
-##Artifactory Repositories
-###Maven
+## Artifactory Repositories
+### Maven
 
 
 ```
@@ -14,7 +14,7 @@ Java required
     </repository>
 ```
  
-###SQLcl Maven Coordinates
+### SQLcl Maven Coordinates
 
 ```
     <dependencies>
@@ -53,11 +53,11 @@ Java required
     </dependencies>
 ```
 
-#Examples
-##Overview
+# Examples
+## Overview
 The main example here is aimed at showing how to use liquibase to prepare a changeset, in this case a simple object export, and then update the "production" db with that changeset.
 
-##Preparation
+## Preparation
 For this to work, we need some files which the runner will run two files, one on the development db and on on the production  db.  On the development db, we need to run 
 
 ```
@@ -79,7 +79,7 @@ This specifies the way we want ddl to be generated and applied to the database a
 
 ![demo/intellij.png](demo/intellij.png)
 
-##SQLcl Runner
+## SQLcl Runner
 This class is a wrapper around SQLcl to create a very simple API which users  can call.  
 `runSQLcl("Commands to run", <SQLcl arguments>...) `
 
@@ -185,7 +185,7 @@ public class SQLclRunner {
 }
 
 ```
-##Connecting to a database and running a command
+## Connecting to a database and running a command
 Now, while using the wrapper you can call out to  any file.  The demo passes in arguments to SQLcl and in this demo, we are using named connections with saved encrypted passwords. There have been two created
 
 ```
@@ -205,7 +205,7 @@ public class SQLCLIntegrationDemo {
 
 ```
 
-##Demo Results
+## Demo Results
 In case you don't have time to run them, here is the run through
 Look at source database
 
@@ -267,7 +267,7 @@ no rows selected
 CICD@jdbc:oracle:thin:@localhost:9521/freepdb1🍻🍺 >
 ```
 
-##Running the demo
+## Running the demo
 
 ```
 java -jar -classpath ... oracle.dbtools.SQLCLIntegrationDemo
