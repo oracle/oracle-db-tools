@@ -77,6 +77,8 @@ lb update -chf  oow_demo_stores_table.xml
 
 This specifies the way we want ddl to be generated and applied to the database and then run the changelog we generated above.
 
+![demo/intellij.png](demo/intellij.png)
+
 ##SQLcl Runner
 This class is a wrapper around SQLcl to create a very simple API which users  can call.  
 `runSQLcl("Commands to run", <SQLcl arguments>...) `
