@@ -2,7 +2,7 @@
 
 ![SQLcl logo](images/sql-command-line-200.png)
 
-SQLcl is the core scripting library for Oracle SQL Developer.  That library has been factored out and wrappered with a command line to bring SQLcl.
+SQLcl is the core scripting library for Oracle SQL Developer.  That library has been factored out and wrapped with a command line to bring SQLcl.
 
 # SQLcl Download
 
